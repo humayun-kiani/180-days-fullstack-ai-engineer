@@ -12,7 +12,7 @@
 
 ## 👤 About This Repository
 
-Hi! I'm **[Humayun kiani]** from Rawalpindi, Pakistan.
+Hi! I'm **Humayun kiani** from Rawalpindi, Pakistan.
 
 I started this journey as a **complete beginner** with the goal of becoming
 a **Full Stack AI Engineer** in 180 days — building real projects every
