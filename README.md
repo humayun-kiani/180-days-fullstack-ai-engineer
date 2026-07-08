@@ -45,7 +45,7 @@ This repository is:
 | Day                                             | Topic                          | Project Built              | Status  |
 | ----------------------------------------------- | ------------------------------ | -------------------------- | ------- |
 | [Day 01](./Day-01-Dev-Setup-and-Python-Basics/) | Dev Setup + Python Basics      | Personal Introduction App  | ✅ Done |
-| [Day 02](./Day-02-Variables-DataTypes-Strings/) | Variables, Data Types, Strings | Mad Libs Generator         | ⏳      |
+| [Day 02](./Day-02-Variables-DataTypes-Strings/) | Variables, Data Types, Strings | Mad Libs Generator         | ✅ Done |
 | [Day 03](./Day-03-Conditionals-Loops/)          | Conditionals & Loops           | Number Guessing Game       | ⏳      |
 | [Day 04](./Day-04-Lists-Dicts-Tuples-Sets/)     | Lists, Dicts, Tuples, Sets     | Student Grade Calculator   | ⏳      |
 | [Day 05](./Day-05-Functions/)                   | Functions & Scope              | Expense Tracker            | ⏳      |
