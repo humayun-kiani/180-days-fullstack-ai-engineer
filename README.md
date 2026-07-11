@@ -47,7 +47,7 @@ This repository is:
 | [Day 01](./Day-01-Dev-Setup-and-Python-Basics/) | Dev Setup + Python Basics      | Personal Introduction App  | ✅ Done |
 | [Day 02](./Day-02-Variables-DataTypes-Strings/) | Variables, Data Types, Strings | Mad Libs Generator         | ✅ Done |
 | [Day 03](./Day-03-Conditionals-Loops/)          | Conditionals & Loops           | Number Guessing Game       | ✅ Done |
-| [Day 04](./Day-04-Lists-Dicts-Tuples-Sets/)     | Lists, Dicts, Tuples, Sets     | Student Grade Calculator   | ⏳      |
+| [Day 04](./Day-04-Lists-Dicts-Tuples-Sets/)     | Lists, Dicts, Tuples, Sets     | Student Grade Calculator   | ✅ Done |
 | [Day 05](./Day-05-Functions/)                   | Functions & Scope              | Expense Tracker            | ⏳      |
 | [Day 06](./Day-06-File-IO-Error-Handling/)      | File I/O & Error Handling      | Persistent Expense Tracker | ⏳      |
 | [Day 07](./Day-07-OOP-Classes/)                 | Object-Oriented Programming    | Bank Account System        | ⏳      |
