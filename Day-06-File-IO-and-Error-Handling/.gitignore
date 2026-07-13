@@ -1,0 +1,10 @@
+# Data files — personal data, do not commit
+expenses.json
+expenses_backup.json
+expenses_export.csv
+day06_notes.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
