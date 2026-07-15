@@ -29,14 +29,14 @@ This repository is:
 
 ## 🗺️ Roadmap Overview
 
-| Phase                        | Days        | Topics                                   | Status         |
-| ---------------------------- | ----------- | ---------------------------------------- | -------------- |
-| **Phase 1** — Foundations    | Day 01–30   | Python, Git, Linux, Databases, DSA       | 🔄 In Progress |
-| **Phase 2** — Frontend       | Day 31–60   | HTML, CSS, JavaScript, React, Next.js    | ⏳ Upcoming    |
-| **Phase 3** — Backend        | Day 61–90   | FastAPI, PostgreSQL, Redis, Docker, AWS  | ⏳ Upcoming    |
-| **Phase 4** — AI Engineering | Day 91–120  | LLMs, RAG, Agents, LangChain, Embeddings | ⏳ Upcoming    |
-| **Phase 5** — Full Stack AI  | Day 121–150 | SaaS Products, Stripe, Real-time, Deploy | ⏳ Upcoming    |
-| **Phase 6** — Job Ready      | Day 151–180 | System Design, DSA, Resume, Applications | ⏳ Upcoming    |
+| Phase                        | Days        | Topics                                   | Status                |
+| ---------------------------- | ----------- | ---------------------------------------- | --------------------- |
+| **Phase 1** — Foundations    | Day 01–30   | Python, Git, Linux, Databases, DSA       | 🔄 Week 1 Complete ✅ |
+| **Phase 2** — Frontend       | Day 31–60   | HTML, CSS, JavaScript, React, Next.js    | ⏳ Upcoming           |
+| **Phase 3** — Backend        | Day 61–90   | FastAPI, PostgreSQL, Redis, Docker, AWS  | ⏳ Upcoming           |
+| **Phase 4** — AI Engineering | Day 91–120  | LLMs, RAG, Agents, LangChain, Embeddings | ⏳ Upcoming           |
+| **Phase 5** — Full Stack AI  | Day 121–150 | SaaS Products, Stripe, Real-time, Deploy | ⏳ Upcoming           |
+| **Phase 6** — Job Ready      | Day 151–180 | System Design, DSA, Resume, Applications | ⏳ Upcoming           |
 
 ---
 
@@ -50,7 +50,8 @@ This repository is:
 | [Day 04](./Day-04-Lists-Dicts-Tuples-Sets/)     | Lists, Dicts, Tuples, Sets     | Student Grade Calculator   | ✅ Done |
 | [Day 05](./Day-05-Functions/)                   | Functions & Scope              | Expense Tracker            | ✅ Done |
 | [Day 06](./Day-06-File-IO-Error-Handling/)      | File I/O & Error Handling      | Persistent Expense Tracker | ✅ Done |
-| [Day 07](./Day-07-OOP-Classes/)                 | Object-Oriented Programming    | Bank Account System        | ⏳      |
+| [Day 07](./Day-07-OOP-Classes/)                 | Object-Oriented Programming    | Bank Account System        | ✅ Done |
+| [Day 08](./Day-08-Modules-Packages-pip-Venv/)   | Modules, Packages, pip, Venv   | Python Toolkit             | ✅ Done |
 | ...                                             | ...                            | ...                        | ...     |
 | Day 180                                         | Job Applications & Offers      | —                          | ⏳      |
 
