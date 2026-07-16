@@ -52,6 +52,7 @@ This repository is:
 | [Day 06](./Day-06-File-IO-Error-Handling/)      | File I/O & Error Handling      | Persistent Expense Tracker | ✅ Done |
 | [Day 07](./Day-07-OOP-Classes/)                 | Object-Oriented Programming    | Bank Account System        | ✅ Done |
 | [Day 08](./Day-08-Modules-Packages-pip-Venv/)   | Modules, Packages, pip, Venv   | Python Toolkit             | ✅ Done |
+| [Day 09](./Day-09-HTTP-APIs-Requests/)          | HTTP, REST APIs, requests      | Weather CLI App            | ✅ Done |
 | ...                                             | ...                            | ...                        | ...     |
 | Day 180                                         | Job Applications & Offers      | —                          | ⏳      |
 
