@@ -1,7 +1,6 @@
 # MAD LIBS GENERATOR
 # Day 02 - 180 Days Full Stack AI Engineer Roadmap
 
-
 import random
 
 def get_word_input(prompt):
@@ -56,8 +55,7 @@ def story_two(name, adjective, noun, verb, place, animal, food):
 
 def collect_words():
     """Collect all the words needed for the story from the user."""
-    print("\n" + "=" * 50)
-    print("  Answer these questions (don't think too hard!)")
+    print("\n Answer these questions")
 
     name = get_word_input("\nEnter a person's name: ")
     adjective = get_word_input("Enter an adjective: ")
@@ -86,9 +84,7 @@ def play_game():
     """Main game function."""
 
     # Welcome banner
-    print("\n" + "=" * 50)
-    print("       WELCOME TO THE MAD LIBS GENERATOR")
-    print("  Fill in the words. Prepare to laugh at the story.")
+    print("|\n WELCOME TO THE MAD LIBS GENERATOR")
 
     # List of story functions to randomly pick from
     stories = [story_one, story_two]
