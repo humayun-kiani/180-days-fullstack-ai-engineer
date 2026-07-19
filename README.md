@@ -42,19 +42,20 @@ This repository is:
 
 ## 📅 Daily Progress Log
 
-| Day                                             | Topic                          | Project Built              | Status  |
-| ----------------------------------------------- | ------------------------------ | -------------------------- | ------- |
-| [Day 01](./Day-01-Dev-Setup-and-Python-Basics/) | Dev Setup + Python Basics      | Personal Introduction App  | ✅ Done |
-| [Day 02](./Day-02-Variables-DataTypes-Strings/) | Variables, Data Types, Strings | Mad Libs Generator         | ✅ Done |
-| [Day 03](./Day-03-Conditionals-Loops/)          | Conditionals & Loops           | Number Guessing Game       | ✅ Done |
-| [Day 04](./Day-04-Lists-Dicts-Tuples-Sets/)     | Lists, Dicts, Tuples, Sets     | Student Grade Calculator   | ✅ Done |
-| [Day 05](./Day-05-Functions/)                   | Functions & Scope              | Expense Tracker            | ✅ Done |
-| [Day 06](./Day-06-File-IO-Error-Handling/)      | File I/O & Error Handling      | Persistent Expense Tracker | ✅ Done |
-| [Day 07](./Day-07-OOP-Classes/)                 | Object-Oriented Programming    | Bank Account System        | ✅ Done |
-| [Day 08](./Day-08-Modules-Packages-pip-Venv/)   | Modules, Packages, pip, Venv   | Python Toolkit             | ✅ Done |
-| [Day 09](./Day-09-HTTP-APIs-Requests/)          | HTTP, REST APIs, requests      | Weather CLI App            | ✅ Done |
-| ...                                             | ...                            | ...                        | ...     |
-| Day 180                                         | Job Applications & Offers      | —                          | ⏳      |
+| Day                                             | Topic                                  | Project Built              | Status  |
+| ----------------------------------------------- | -------------------------------------- | -------------------------- | ------- |
+| [Day 01](./Day-01-Dev-Setup-and-Python-Basics/) | Dev Setup + Python Basics              | Personal Introduction App  | ✅ Done |
+| [Day 02](./Day-02-Variables-DataTypes-Strings/) | Variables, Data Types, Strings         | Mad Libs Generator         | ✅ Done |
+| [Day 03](./Day-03-Conditionals-Loops/)          | Conditionals & Loops                   | Number Guessing Game       | ✅ Done |
+| [Day 04](./Day-04-Lists-Dicts-Tuples-Sets/)     | Lists, Dicts, Tuples, Sets             | Student Grade Calculator   | ✅ Done |
+| [Day 05](./Day-05-Functions/)                   | Functions & Scope                      | Expense Tracker            | ✅ Done |
+| [Day 06](./Day-06-File-IO-Error-Handling/)      | File I/O & Error Handling              | Persistent Expense Tracker | ✅ Done |
+| [Day 07](./Day-07-OOP-Classes/)                 | Object-Oriented Programming            | Bank Account System        | ✅ Done |
+| [Day 08](./Day-08-Modules-Packages-pip-Venv/)   | Modules, Packages, pip, Venv           | Python Toolkit             | ✅ Done |
+| [Day 09](./Day-09-HTTP-APIs-Requests/)          | HTTP, REST APIs, requests              | Weather CLI App            | ✅ Done |
+| [Day 10](./Day-10-Advanced-Python-Features/)    | Comprehensions, Generators, Decorators | Data Pipeline Script       | ✅ Done |
+| ...                                             | ...                                    | ...                        | ...     |
+| Day 180                                         | Job Applications & Offers              | —                          | ⏳      |
 
 > ✅ Done &nbsp;|&nbsp; 🔄 In Progress &nbsp;|&nbsp; ⏳ Upcoming
 
