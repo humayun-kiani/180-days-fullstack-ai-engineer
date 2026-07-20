@@ -54,6 +54,8 @@ This repository is:
 | [Day 08](./Day-08-Modules-Packages-pip-Venv/)   | Modules, Packages, pip, Venv           | Python Toolkit             | ✅ Done |
 | [Day 09](./Day-09-HTTP-APIs-Requests/)          | HTTP, REST APIs, requests              | Weather CLI App            | ✅ Done |
 | [Day 10](./Day-10-Advanced-Python-Features/)    | Comprehensions, Generators, Decorators | Data Pipeline Script       | ✅ Done |
+| [Day 11](./Day-11-Regex-and-CLI-Tools/)         | Regex & CLI with argparse              | Log File Analyzer CLI      | ✅ Done |
+| [Day 12](./Day-12-Concurrency-Asyncio/)         | Threading, Multiprocessing, asyncio    | Async News Fetcher         | ✅ Done |
 | ...                                             | ...                                    | ...                        | ...     |
 | Day 180                                         | Job Applications & Offers              | —                          | ⏳      |
 
