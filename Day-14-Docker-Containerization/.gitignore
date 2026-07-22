@@ -1,0 +1,9 @@
+venv/
+.env
+__pycache__/
+*.pyc
+data/*.json
+data/*.csv
+*.log
+.pytest_cache/
+htmlcov/

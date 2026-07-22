@@ -1,0 +1,120 @@
+# ============================================================
+# docker-compose.yml
+# Production compose file — all services
+# ============================================================
+
+version: "3.9"
+
+services:
+  # ─── PostgreSQL Database ───
+  db:
+    image: postgres:15-alpine
+    container_name: expense_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-expense_tracker}
+      POSTGRES_USER: ${POSTGRES_USER:-expense_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - expense_network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-expense_user} -d ${POSTGRES_DB:-expense_tracker}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Redis Cache ───
+  cache:
+    image: redis:7-alpine
+    container_name: expense_cache
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - expense_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # ─── FastAPI Application ───
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    image: expense_tracker_api:latest
+    container_name: expense_api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: db
+      REDIS_HOST: cache
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - app_data:/app/data
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    networks:
+      - expense_network
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ─── pgAdmin (Database GUI) ───
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: expense_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - expense_network
+    profiles:
+      - tools # only start when explicitly requested
+
+# Named volumes — persist data across container restarts
+volumes:
+  postgres_data:
+    name: expense_postgres_data
+  redis_data:
+    name: expense_redis_data
+  app_data:
+    name: expense_app_data
+
+# Internal network — containers talk to each other by service name
+networks:
+  expense_network:
+    name: expense_network
+    driver: bridge

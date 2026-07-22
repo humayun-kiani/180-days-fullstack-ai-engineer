@@ -1,0 +1,21 @@
+# ============================================================
+# docker-compose.dev.yml
+# Development overrides — hot reload, debug mode, extra tools
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# ============================================================
+
+version: "3.9"
+
+services:
+  api:
+    build:
+      target: final # still use the same final stage
+    volumes:
+      - ./src:/app/src # mount source code for hot reload
+    environment:
+      DEBUG: "true"
+      APP_ENV: development
+    command: ["python", "src/main.py"]
+
+  pgadmin:
+    profiles: [] # always start pgadmin in dev (remove profile requirement)

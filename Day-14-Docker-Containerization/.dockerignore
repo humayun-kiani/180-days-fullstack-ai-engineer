@@ -1,0 +1,43 @@
+# Version control
+.git
+.gitignore
+
+# Environment variables (sensitive!)
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Test files
+tests/
+.pytest_cache/
+htmlcov/
+.coverage
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Development data
+data/*.json
+data/*.csv
+*.log
+
+# Documentation
+*.md
+docs/
