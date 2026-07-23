@@ -58,6 +58,7 @@ This repository is:
 | [Day 12](./Day-12-Concurrency-Asyncio/)         | Threading, Multiprocessing, asyncio          | Async News Fetcher                | ✅ Done |
 | [Day 13](./Day-13-Testing-with-pytest/)         | Testing: pytest, fixtures, mocking, coverage | Bank Account Test Suite           | ✅ Done |
 | [Day 14](./Day-14-Docker-Containerization/)     | Docker, Compose, Multi-stage builds          | Containerized Expense Tracker API | ✅ Done |
+| [Day 15](./Day-15-SQL-Fundamentals/)            | SQL: SELECT, JOIN, GROUP BY, Indexes         | Student Analytics Database        | ✅ Done |
 | ...                                             | ...                                          | ...                               | ...     |
 | Day 180                                         | Job Applications & Offers                    | —                                 | ⏳      |
 
