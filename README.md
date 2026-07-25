@@ -60,6 +60,7 @@ This repository is:
 | [Day 14](./Day-14-Docker-Containerization/)     | Docker, Compose, Multi-stage builds             | Containerized Expense Tracker API | ✅ Done |
 | [Day 15](./Day-15-SQL-Fundamentals/)            | SQL: SELECT, JOIN, GROUP BY, Indexes            | Student Analytics Database        | ✅ Done |
 | [Day 16](./Day-16-PostgreSQL/)                  | PostgreSQL: JSONB, Arrays, Views, Triggers, FTS | Blog Platform Database            | ✅ Done |
+| [Day 17](./Day-17-SQLAlchemy-ORM/)              | SQLAlchemy ORM: Models, Sessions, Alembic       | Blog ORM Layer                    | ✅ Done |
 | ...                                             | ...                                             | ...                               | ...     |
 | Day 180                                         | Job Applications & Offers                       | —                                 | ⏳      |
 
