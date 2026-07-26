@@ -61,6 +61,7 @@ This repository is:
 | [Day 15](./Day-15-SQL-Fundamentals/)            | SQL: SELECT, JOIN, GROUP BY, Indexes            | Student Analytics Database        | ✅ Done |
 | [Day 16](./Day-16-PostgreSQL/)                  | PostgreSQL: JSONB, Arrays, Views, Triggers, FTS | Blog Platform Database            | ✅ Done |
 | [Day 17](./Day-17-SQLAlchemy-ORM/)              | SQLAlchemy ORM: Models, Sessions, Alembic       | Blog ORM Layer                    | ✅ Done |
+| [Day 18](./Day-18-MongoDB-Product-Catalog/)     | MongoDB: Documents, CRUD, Aggregation           | E-commerce Product Catalog        | ✅ Done |
 | ...                                             | ...                                             | ...                               | ...     |
 | Day 180                                         | Job Applications & Offers                       | —                                 | ⏳      |
 
