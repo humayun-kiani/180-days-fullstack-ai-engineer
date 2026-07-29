@@ -1,28 +1,21 @@
 # MAD LIBS GENERATOR
-# Day 02 - 180 Days Full Stack AI Engineer Roadmap
-
 import random
 
 def get_word_input(prompt):
     """Get a word from the user and clean it up."""
-    word = input(prompt).strip()       # .strip() removes accidental spaces
-    return word.lower()                # .lower() makes it lowercase
-
+    word = input(prompt).strip()   
+    return word.lower()                
 
 def story_one(name, adjective, noun, verb, place, animal, food):
     """Story template 1: The Unexpected Adventure"""
     story = f"""
-
     THE UNEXPECTED ADVENTURE
-
     One {adjective} morning, {name.title()} woke up to find a {animal}
     sitting on their {noun}. The {animal} was eating {food} and
     looked very confused.
-
     {name.title()} decided to {verb} as fast as possible toward the
     nearest {place}. Along the way, they met a {adjective} wizard
     who offered them more {food} in exchange for the {noun}.
-
     In the end, {name.title()} and the {animal} became best friends
     and opened a {food} shop in {place}. It was the most {adjective}
     shop in the entire world.
@@ -31,7 +24,6 @@ def story_one(name, adjective, noun, verb, place, animal, food):
     """
     return story
 
-
 def story_two(name, adjective, noun, verb, place, animal, food):
     """Story template 2: The Tech Startup"""
     story = f"""
@@ -39,11 +31,9 @@ def story_two(name, adjective, noun, verb, place, animal, food):
     {name.title()} had a {adjective} idea: build an app where people
     could {verb} with their {animal} online. Everyone said it was a
     {adjective} plan that would never work.
-
     But {name.title()} kept coding in their {place}, surviving only
     on {food} and coffee. They used a {noun} as their main computer
     (don't ask how).
-
     Six months later, the app had 1 million {animal} users and was
     valued at a {adjective} amount of money. The secret? They added
     a feature to {verb} while eating {food}.
@@ -78,7 +68,6 @@ def display_word_summary(name, adjective, noun, verb, place, animal, food):
     print(f"  Place:     {place}")
     print(f"  Animal:    {animal}")
     print(f"  Food:      {food}")
-
 
 def play_game():
     """Main game function."""
@@ -119,7 +108,6 @@ def play_game():
             print(" Keep learning, keep building. See you on Day 3!")
             print("=" * 50 + "\n")
             break
-
 
 # Entry point
 if __name__ == "__main__":

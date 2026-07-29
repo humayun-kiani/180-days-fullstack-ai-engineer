@@ -64,6 +64,7 @@ This repository is:
 | [Day 18](./Day-18-MongoDB-Product-Catalog/)     | MongoDB: Documents, CRUD, Aggregation            | E-commerce Product Catalog        | ✅ Done |
 | [Day 19](./Day-19-Redis-Caching/)               | Redis: Strings, Hashes, Lists, Sets, Sorted Sets | Smart Weather Cache               | ✅ Done |
 | [Day 20](./Day-20-FastAPI-REST-API/)            | FastAPI: REST API, Pydantic, DI, Middleware      | Task Manager REST API             | ✅ Done |
+| [Day 21](./Day-21-FastAPI-Database/)            | FastAPI + SQLAlchemy + PostgreSQL + Alembic      | DB-Backed Task Manager            | ✅ Done |
 | ...                                             | ...                                              | ...                               | ...     |
 | Day 180                                         | Job Applications & Offers                        | —                                 | ⏳      |
 

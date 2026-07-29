@@ -12,7 +12,6 @@ quotes = [
     "Learning to code is learning to create and innovate.",
 ]
 
-
 def show_welcome():
     """Display a personalized welcome message with today's date and a quote."""
     
@@ -26,7 +25,6 @@ def show_welcome():
     # Display the welcome banner
     print("   PERSONAL INTRODUCTION APP")
 
-    
     # Get user input
     name = input("\nWhat is your name? ")
     
@@ -35,9 +33,6 @@ def show_welcome():
     print(f"Today is: {formatted_date}")
     print("\nYour motivational quote for today:")
     print(f'   "{quote}"')
-    print("\nKeep building, keep learning!")
-
-
 
 if __name__ == "__main__":
     show_welcome()

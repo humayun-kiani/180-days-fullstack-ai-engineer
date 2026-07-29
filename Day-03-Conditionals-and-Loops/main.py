@@ -1,19 +1,13 @@
-# ============================================================
 # NUMBER GUESSING GAME
-# Day 03 - 180 Days Full Stack AI Engineer Roadmap
-# ============================================================
-
 import random
-
 
 # Global variable to track best score across all games
 best_score = None
 
-
 def get_performance_rating(attempts):
     """Return a performance rating based on number of attempts."""
     if attempts == 1:
-        return "IMPOSSIBLE! Are you psychic?"
+        return "IMPOSSIBLE!"
     elif attempts <= 3:
         return "Outstanding!"
     elif attempts <= 5:
@@ -41,7 +35,6 @@ def display_hint(guess, secret_number):
 
     return hint
 
-
 def get_valid_guess(attempt, max_attempts):
     """Get a valid number guess from the user."""
     while True:
@@ -59,7 +52,6 @@ def get_valid_guess(attempt, max_attempts):
 
         except ValueError:
             print("That is not a valid number. Please try again.")
-
 
 def play_round():
     """Play one round of the guessing game. Returns number of attempts or None if gave up."""
@@ -124,7 +116,6 @@ def play_round():
 
     return None
 
-
 def show_statistics(games_played, games_won, total_attempts):
     """Display game statistics."""
     print("\n" + "=" * 50)
@@ -183,11 +174,8 @@ def main():
         else:
             # Show final statistics before quitting
             show_statistics(games_played, games_won, total_attempts)
-            print("\n  Thanks for playing! See you on Day 4!")
-            print("  Keep building, keep learning.")
-            print("=" * 50 + "\n")
+            print("\n  Thanks for playing!")
             break
-
 
 # Entry point
 if __name__ == "__main__":
