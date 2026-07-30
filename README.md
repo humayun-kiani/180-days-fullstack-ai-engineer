@@ -65,6 +65,7 @@ This repository is:
 | [Day 19](./Day-19-Redis-Caching/)               | Redis: Strings, Hashes, Lists, Sets, Sorted Sets | Smart Weather Cache               | ✅ Done |
 | [Day 20](./Day-20-FastAPI-REST-API/)            | FastAPI: REST API, Pydantic, DI, Middleware      | Task Manager REST API             | ✅ Done |
 | [Day 21](./Day-21-FastAPI-Database/)            | FastAPI + SQLAlchemy + PostgreSQL + Alembic      | DB-Backed Task Manager            | ✅ Done |
+| [Day 22](./Day-22-FastAPI-Auth/)                | JWT, bcrypt, OAuth2, RBAC, Token Blacklist       | Task Manager Auth System          | ✅ Done |
 | ...                                             | ...                                              | ...                               | ...     |
 | Day 180                                         | Job Applications & Offers                        | —                                 | ⏳      |
 
