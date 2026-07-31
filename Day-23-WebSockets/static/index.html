@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real-Time Task Board — Day 23</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
+      header {
+        background: #1e293b;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #334155;
+      }
+      header h1 {
+        font-size: 1.2rem;
+        color: #38bdf8;
+      }
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .status-badge.connected {
+        background: #065f46;
+        color: #6ee7b7;
+      }
+      .status-badge.disconnected {
+        background: #7f1d1d;
+        color: #fca5a5;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 0;
+        height: calc(100vh - 61px);
+      }
+
+      /* Sidebar */
+      .sidebar {
+        background: #1e293b;
+        border-right: 1px solid #334155;
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar-section {
+        padding: 1rem;
+        border-bottom: 1px solid #334155;
+      }
+      .sidebar-section h3 {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        margin-bottom: 0.75rem;
+      }
+
+      /* Connect Panel */
+      .connect-panel {
+        padding: 1rem;
+      }
+      select,
+      input,
+      button {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid #334155;
+        background: #0f172a;
+        color: #e2e8f0;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
+      button {
+        cursor: pointer;
+        border: none;
+        font-weight: 600;
+        transition: opacity 0.2s;
+      }
+      button:hover {
+        opacity: 0.85;
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .btn-primary {
+        background: #3b82f6;
+        color: white;
+      }
+      .btn-success {
+        background: #10b981;
+        color: white;
+      }
+      .btn-danger {
+        background: #ef4444;
+        color: white;
+      }
+      .btn-secondary {
+        background: #334155;
+        color: #e2e8f0;
+      }
+
+      /* Project list */
+      .project-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        margin-bottom: 0.25rem;
+        font-size: 0.875rem;
+        border: 1px solid transparent;
+      }
+      .project-item:hover {
+        background: #334155;
+      }
+      .project-item.active {
+        background: #1d4ed8;
+        border-color: #3b82f6;
+      }
+      .project-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* Presence list */
+      .presence-user {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+        font-size: 0.875rem;
+      }
+      .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #3b82f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      /* Main content */
+      .main {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* Task board */
+      .board-header {
+        padding: 1rem 1.5rem;
+        background: #1e293b;
+        border-bottom: 1px solid #334155;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .board-header h2 {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .quick-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .quick-actions input {
+        margin: 0;
+        width: 200px;
+      }
+      .quick-actions button {
+        width: auto;
+        margin: 0;
+        padding: 0.5rem 1rem;
+      }
+
+      /* Columns */
+      .columns {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        padding: 1rem;
+        overflow-y: auto;
+        flex: 1;
+      }
+      .column {
+        background: #1e293b;
+        border-radius: 0.75rem;
+        padding: 0.75rem;
+      }
+      .column-header {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .task-count {
+        background: #334155;
+        color: #94a3b8;
+        padding: 0.1rem 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.7rem;
+      }
+
+      /* Task cards */
+      .task-card {
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        transition: all 0.2s;
+      }
+      .task-card:hover {
+        border-color: #3b82f6;
+      }
+      .task-card.just-updated {
+        border-color: #10b981;
+        animation: pulse-border 1s ease-out;
+      }
+      @keyframes pulse-border {
+        0% {
+          border-color: #10b981;
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+        }
+        100% {
+          border-color: #334155;
+          box-shadow: none;
+        }
+      }
+      .task-title {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        color: #f1f5f9;
+      }
+      .task-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .task-assignee {
+        font-size: 0.7rem;
+        color: #64748b;
+      }
+      .priority-badge {
+        font-size: 0.65rem;
+        padding: 0.1rem 0.4rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .priority-low {
+        background: #1e3a2f;
+        color: #86efac;
+      }
+      .priority-medium {
+        background: #1c3046;
+        color: #93c5fd;
+      }
+      .priority-high {
+        background: #422006;
+        color: #fdba74;
+      }
+      .priority-urgent {
+        background: #3f1212;
+        color: #fca5a5;
+      }
+
+      .task-actions {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.25rem;
+      }
+      .task-actions button {
+        width: auto;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.7rem;
+        margin: 0;
+        border-radius: 0.25rem;
+      }
+
+      /* Message log */
+      .log-panel {
+        background: #1e293b;
+        border-top: 1px solid #334155;
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+      }
+      .log-header {
+        padding: 0.5rem 1rem;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        border-bottom: 1px solid #334155;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .log-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0.5rem 1rem;
+        font-family: "Courier New", monospace;
+        font-size: 0.75rem;
+      }
+      .log-entry {
+        margin-bottom: 0.2rem;
+        line-height: 1.4;
+      }
+      .log-entry .time {
+        color: #64748b;
+        margin-right: 0.5rem;
+      }
+      .log-entry.incoming {
+        color: #6ee7b7;
+      }
+      .log-entry.outgoing {
+        color: #93c5fd;
+      }
+      .log-entry.system {
+        color: #c084fc;
+      }
+      .log-entry.error {
+        color: #fca5a5;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>⚡ Real-Time Task Board — Day 23 WebSockets</h1>
+      <span id="statusBadge" class="status-badge disconnected"
+        >● Disconnected</span
+      >
+    </header>
+
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Connect -->
+        <div class="sidebar-section">
+          <h3>Connection</h3>
+          <select id="tokenSelect">
+            <option value="demo_token_humayun">Humayun (Admin)</option>
+            <option value="demo_token_ali">Ali (Editor)</option>
+            <option value="demo_token_sara">Sara (User)</option>
+          </select>
+          <button class="btn-primary" id="connectBtn" onclick="connect()">
+            Connect
+          </button>
+          <button
+            class="btn-danger"
+            id="disconnectBtn"
+            onclick="disconnect()"
+            disabled
+          >
+            Disconnect
+          </button>
+        </div>
+
+        <!-- Projects -->
+        <div class="sidebar-section">
+          <h3>Projects</h3>
+          <div id="projectList">
+            <div style="color: #64748b; font-size: 0.8rem">
+              Connect to see projects
+            </div>
+          </div>
+        </div>
+
+        <!-- Presence -->
+        <div class="sidebar-section">
+          <h3>Viewing This Project</h3>
+          <div id="presenceList">
+            <div style="color: #64748b; font-size: 0.8rem">
+              Subscribe to a project
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="sidebar-section">
+          <h3>Live Stats</h3>
+          <div id="statsPanel" style="font-size: 0.8rem; color: #94a3b8">
+            <div>Connections: <span id="totalConnections">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Board -->
+      <div class="main">
+        <div class="board-header">
+          <h2 id="boardTitle">Select a project to view tasks</h2>
+          <div class="quick-actions">
+            <input
+              type="text"
+              id="newTaskInput"
+              placeholder="New task title..."
+              disabled
+            />
+            <select id="newTaskPriority" disabled style="width: 120px">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+            <button
+              class="btn-success"
+              id="addTaskBtn"
+              onclick="addTask()"
+              disabled
+            >
+              + Add Task
+            </button>
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="column-header" style="color: #94a3b8">
+              Pending <span id="count-pending" class="task-count">0</span>
+            </div>
+            <div id="col-pending"></div>
+          </div>
+          <div class="column">
+            <div class="column-header" style="color: #60a5fa">
+              In Progress
+              <span id="count-in_progress" class="task-count">0</span>
+            </div>
+            <div id="col-in_progress"></div>
+          </div>
+          <div class="column">
+            <div class="column-header" style="color: #34d399">
+              Done <span id="count-done" class="task-count">0</span>
+            </div>
+            <div id="col-done"></div>
+          </div>
+          <div class="column">
+            <div class="column-header" style="color: #a78bfa">
+              Archived <span id="count-archived" class="task-count">0</span>
+            </div>
+            <div id="col-archived"></div>
+          </div>
+        </div>
+
+        <!-- Message Log -->
+        <div class="log-panel">
+          <div class="log-header">
+            <span>📡 WebSocket Message Log</span>
+            <button
+              onclick="clearLog()"
+              style="
+                width: auto;
+                padding: 0.2rem 0.5rem;
+                font-size: 0.7rem;
+                background: #334155;
+                border: none;
+                border-radius: 0.25rem;
+                cursor: pointer;
+                margin: 0;
+                color: #e2e8f0;
+              "
+            >
+              Clear
+            </button>
+          </div>
+          <div class="log-body" id="messageLog"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let ws = null;
+      let currentProjectId = null;
+      const projects = {};
+
+      // ─── WebSocket Connection ────────────────────────────────
+
+      function connect() {
+        const token = document.getElementById("tokenSelect").value;
+        const url = `ws://localhost:8000/ws?token=${token}`;
+
+        log(`Connecting to ${url}...`, "system");
+        ws = new WebSocket(url);
+
+        ws.onopen = () => {
+          log("WebSocket connection established", "system");
+        };
+
+        ws.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
+          handleServerMessage(msg);
+        };
+
+        ws.onerror = (error) => {
+          log(`WebSocket error: ${JSON.stringify(error)}`, "error");
+          updateStatus(false);
+        };
+
+        ws.onclose = (event) => {
+          log(
+            `WebSocket closed: code=${event.code}, reason=${event.reason}`,
+            "system",
+          );
+          updateStatus(false);
+        };
+      }
+
+      function disconnect() {
+        if (ws) {
+          ws.close(1000, "User disconnected");
+          ws = null;
+        }
+      }
+
+      function send(message) {
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+          log("Not connected!", "error");
+          return;
+        }
+        const payload = JSON.stringify(message);
+        ws.send(payload);
+        log(`→ ${JSON.stringify(message)}`, "outgoing");
+      }
+
+      // ─── Server Message Handlers ─────────────────────────────
+
+      function handleServerMessage(msg) {
+        const brief =
+          JSON.stringify(msg).substring(0, 80) +
+          (JSON.stringify(msg).length > 80 ? "..." : "");
+        log(`← [${msg.type}] ${brief}`, "incoming");
+
+        switch (msg.type) {
+          case "connected":
+            handleConnected(msg.data);
+            break;
+          case "authenticated":
+            log(`Authenticated as ${msg.data.username}`, "system");
+            break;
+          case "auth_error":
+            log(`Auth error: ${msg.data.message}`, "error");
+            break;
+          case "task_list":
+            renderTaskList(msg.data.tasks, msg.data.project_id);
+            break;
+          case "task_completed":
+          case "task_updated":
+          case "task_created":
+            handleTaskEvent(msg);
+            break;
+          case "presence_list":
+            renderPresence(msg.data.users);
+            break;
+          case "user_joined":
+            updatePresenceUser(msg.data.user, "join");
+            break;
+          case "user_left":
+            removePresenceUser(msg.data.username);
+            break;
+          case "notification":
+            showNotification(msg.data);
+            break;
+          case "stats":
+            updateStats(msg.data);
+            break;
+        }
+      }
+
+      function handleConnected(data) {
+        updateStatus(true);
+        log(`Welcome ${data.username}! Role: ${data.role}`, "system");
+
+        // Render projects
+        const list = document.getElementById("projectList");
+        list.innerHTML = "";
+        (data.projects || []).forEach((p) => {
+          projects[p.id] = p;
+          const item = document.createElement("div");
+          item.className = "project-item";
+          item.id = `project-${p.id}`;
+          item.innerHTML = `<div class="project-dot" style="background:${p.color}"></div>${p.name}`;
+          item.onclick = () => subscribeProject(p.id);
+          list.appendChild(item);
+        });
+      }
+
+      function handleTaskEvent(msg) {
+        const data = msg.data;
+        if (!data.project_id || data.project_id === currentProjectId) {
+          refreshProjectTasks();
+        }
+        const emoji =
+          msg.type === "task_completed"
+            ? "✅"
+            : msg.type === "task_created"
+              ? "🆕"
+              : "📝";
+        log(
+          `${emoji} ${msg.type}: "${data.title}" by ${data.updated_by || data.completed_by || data.created_by}`,
+          "system",
+        );
+      }
+
+      // ─── Actions ─────────────────────────────────────────────
+
+      function subscribeProject(projectId) {
+        currentProjectId = projectId;
+        document
+          .querySelectorAll(".project-item")
+          .forEach((el) => el.classList.remove("active"));
+        const el = document.getElementById(`project-${projectId}`);
+        if (el) el.classList.add("active");
+        document.getElementById("boardTitle").textContent =
+          projects[projectId]?.name || `Project ${projectId}`;
+        document.getElementById("newTaskInput").disabled = false;
+        document.getElementById("newTaskPriority").disabled = false;
+        document.getElementById("addTaskBtn").disabled = false;
+        send({ type: "subscribe_project", data: { project_id: projectId } });
+      }
+
+      function refreshProjectTasks() {
+        if (currentProjectId) {
+          send({ type: "get_tasks", data: { project_id: currentProjectId } });
+        }
+      }
+
+      function completeTask(taskId) {
+        send({ type: "complete_task", data: { task_id: taskId } });
+      }
+
+      function moveTaskToProgress(taskId) {
+        send({
+          type: "update_task",
+          data: { task_id: taskId, status: "in_progress" },
+        });
+      }
+
+      function addTask() {
+        const title = document.getElementById("newTaskInput").value.trim();
+        const priority = document.getElementById("newTaskPriority").value;
+        if (!title || !currentProjectId) return;
+        send({
+          type: "create_task",
+          data: { title, project_id: currentProjectId, priority },
+        });
+        document.getElementById("newTaskInput").value = "";
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document
+          .getElementById("newTaskInput")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") addTask();
+          });
+      });
+
+      function getStats() {
+        send({ type: "get_stats", data: {} });
+      }
+
+      setInterval(() => {
+        if (ws && ws.readyState === WebSocket.OPEN) getStats();
+      }, 5000);
+
+      // ─── Rendering ───────────────────────────────────────────
+
+      function renderTaskList(tasks, projectId) {
+        const statuses = ["pending", "in_progress", "done", "archived"];
+        statuses.forEach((s) => {
+          document.getElementById(`col-${s}`).innerHTML = "";
+          document.getElementById(`count-${s}`).textContent = "0";
+        });
+
+        const grouped = {
+          pending: [],
+          in_progress: [],
+          done: [],
+          archived: [],
+        };
+        tasks.forEach((t) => {
+          if (grouped[t.status]) grouped[t.status].push(t);
+        });
+
+        statuses.forEach((status) => {
+          const col = document.getElementById(`col-${status}`);
+          document.getElementById(`count-${status}`).textContent =
+            grouped[status].length;
+          grouped[status].forEach((task) => {
+            col.appendChild(createTaskCard(task));
+          });
+        });
+      }
+
+      function createTaskCard(task) {
+        const card = document.createElement("div");
+        card.className = "task-card";
+        card.id = `task-${task.id}`;
+
+        const actions =
+          task.status !== "done" && task.status !== "archived"
+            ? `
+            <div class="task-actions">
+                ${task.status === "pending" ? `<button class="btn-secondary" onclick="moveTaskToProgress(${task.id})">▶ Start</button>` : ""}
+                <button class="btn-success" onclick="completeTask(${task.id})">✓ Done</button>
+            </div>`
+            : "";
+
+        card.innerHTML = `
+            <div class="task-title">${escapeHtml(task.title)}</div>
+            <div class="task-meta">
+                <span class="task-assignee">@${task.assigned_to || "unassigned"}</span>
+                <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+            </div>
+            ${actions}`;
+        return card;
+      }
+
+      function updateTaskCard(taskId, newStatus) {
+        refreshProjectTasks();
+      }
+
+      function renderPresence(users) {
+        const list = document.getElementById("presenceList");
+        list.innerHTML =
+          users.length === 0
+            ? '<div style="color:#64748b;font-size:0.8rem;">No one else here</div>'
+            : users
+                .map(
+                  (u) => `
+                <div class="presence-user">
+                    <div class="avatar">${u.avatar_initial}</div>
+                    <span style="font-size:0.875rem">${u.username}</span>
+                </div>`,
+                )
+                .join("");
+      }
+
+      function updatePresenceUser(user, action) {
+        refreshProjectTasks();
+        const list = document.getElementById("presenceList");
+        if (action === "join") {
+          const div = document.createElement("div");
+          div.className = "presence-user";
+          div.id = `presence-${user.username}`;
+          div.innerHTML = `<div class="avatar">${user.avatar_initial}</div>
+                             <span style="font-size:0.875rem">${user.username}</span>`;
+          if (list.querySelector("div[style]")) list.innerHTML = "";
+          list.appendChild(div);
+        }
+      }
+
+      function removePresenceUser(username) {
+        const el = document.getElementById(`presence-${username}`);
+        if (el) el.remove();
+      }
+
+      function showNotification(data) {
+        const colors = {
+          info: "#3b82f6",
+          success: "#10b981",
+          warning: "#f59e0b",
+          error: "#ef4444",
+        };
+        const notif = document.createElement("div");
+        notif.style.cssText = `
+            position:fixed; top:1rem; right:1rem; z-index:1000;
+            background:#1e293b; border-left:3px solid ${colors[data.level] || colors.info};
+            padding:0.75rem 1rem; border-radius:0.5rem;
+            font-size:0.875rem; max-width:280px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s ease;
+        `;
+        notif.innerHTML = `<strong style="display:block;margin-bottom:0.25rem">${data.title}</strong>${data.message}`;
+        document.body.appendChild(notif);
+        setTimeout(() => {
+          notif.style.opacity = "0";
+          setTimeout(() => notif.remove(), 300);
+        }, 3000);
+      }
+
+      function updateStats(data) {
+        document.getElementById("totalConnections").textContent =
+          data.total_connections;
+      }
+
+      function updateStatus(connected) {
+        const badge = document.getElementById("statusBadge");
+        const connectBtn = document.getElementById("connectBtn");
+        const disconnectBtn = document.getElementById("disconnectBtn");
+        badge.textContent = connected ? "● Connected" : "● Disconnected";
+        badge.className = `status-badge ${connected ? "connected" : "disconnected"}`;
+        connectBtn.disabled = connected;
+        disconnectBtn.disabled = !connected;
+      }
+
+      // ─── Utilities ───────────────────────────────────────────
+
+      function log(text, type = "system") {
+        const logBody = document.getElementById("messageLog");
+        const entry = document.createElement("div");
+        entry.className = `log-entry ${type}`;
+        const time = new Date().toLocaleTimeString("en-US", { hour12: false });
+        entry.innerHTML = `<span class="time">${time}</span>${text}`;
+        logBody.appendChild(entry);
+        logBody.scrollTop = logBody.scrollHeight;
+        if (logBody.children.length > 100)
+          logBody.removeChild(logBody.firstChild);
+      }
+
+      function clearLog() {
+        document.getElementById("messageLog").innerHTML = "";
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    </script>
+  </body>
+</html>
