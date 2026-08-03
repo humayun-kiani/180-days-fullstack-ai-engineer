@@ -1,0 +1,17 @@
+# Secrets — NEVER commit these
+.env
+.env.production
+.env.staging
+
+# SSL certificates (managed by certbot)
+certbot/conf/
+
+# Runtime files
+*.log
+__pycache__/
+*.pyc
+venv/
+
+# Generated
+dist/
+*.egg-info/

@@ -1,0 +1,197 @@
+# ============================================================
+# docker-compose.prod.yml — Production stack
+# Usage: docker compose -f docker-compose.prod.yml up -d
+#
+# Stack:
+#   nginx (80/443) → app (8000) → db (5432) + cache (6379)
+#   certbot (SSL certificate management)
+# ============================================================
+
+version: "3.9"
+
+services:
+  # ── Nginx — Reverse Proxy & SSL Termination ──────────────
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: taskmanager_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot/conf:/etc/letsencrypt:ro # SSL certificates
+      - ./certbot/www:/var/www/certbot:ro # ACME challenge files
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - taskmanager_net
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── Certbot — SSL Certificate Manager ───────────────────
+  certbot:
+    image: certbot/certbot:latest
+    container_name: taskmanager_certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    # Run once to get certificate, then sleep (renewal handled by cron)
+    entrypoint: >
+      /bin/sh -c "
+      trap exit TERM;
+      while :; do
+        certbot renew --webroot -w /var/www/certbot --quiet;
+        sleep 12h & wait $${!};
+      done;"
+    networks:
+      - taskmanager_net
+
+  # ── FastAPI Application ──────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: taskmanager_app:${APP_VERSION:-latest}
+    container_name: taskmanager_app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "false"
+      WEB_CONCURRENCY: "4"
+    # No port exposure — only nginx can reach the app
+    expose:
+      - "8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    networks:
+      - taskmanager_net
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m" # rotate logs at 10MB
+        max-file: "5" # keep 5 log files
+
+  # ── PostgreSQL ───────────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    container_name: taskmanager_db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    # NOT exposed to internet — only internal network
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+      - ./backups/postgres:/backups # backup mount point
+    networks:
+      - taskmanager_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # ── Redis ────────────────────────────────────────────────
+  cache:
+    image: redis:7-alpine
+    container_name: taskmanager_cache
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --requirepass ${REDIS_PASSWORD:-}
+    # NOT exposed to internet
+    volumes:
+      - redis_prod_data:/data
+    networks:
+      - taskmanager_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ── Celery Worker ────────────────────────────────────────
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: taskmanager_celery
+    restart: unless-stopped
+    env_file: .env
+    command: >
+      celery -A worker.celery_app worker
+      --loglevel=warning
+      --concurrency=2
+      -Q emails,reports,notifications,maintenance
+    depends_on:
+      - cache
+      - db
+    networks:
+      - taskmanager_net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # ── Celery Beat (Scheduler) ──────────────────────────────
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: taskmanager_beat
+    restart: unless-stopped
+    env_file: .env
+    command: >
+      celery -A worker.celery_app beat
+      --loglevel=warning
+      --scheduler celery.beat:PersistentScheduler
+    depends_on:
+      - cache
+    networks:
+      - taskmanager_net
+
+# ── Named Volumes ─────────────────────────────────────────
+
+volumes:
+  postgres_prod_data:
+    name: taskmanager_postgres_prod
+  redis_prod_data:
+    name: taskmanager_redis_prod
+
+# ── Networks ─────────────────────────────────────────────
+
+networks:
+  taskmanager_net:
+    name: taskmanager_network
+    driver: bridge

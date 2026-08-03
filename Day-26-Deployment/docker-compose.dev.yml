@@ -1,0 +1,82 @@
+# ============================================================
+# docker-compose.dev.yml — Development stack
+# Usage: docker compose -f docker-compose.dev.yml up
+# ============================================================
+
+version: "3.9"
+
+services:
+  # ── Application ──────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production # or create a dev target with hot-reload
+    container_name: taskmanager_app_dev
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ENVIRONMENT: development
+      DEBUG: "true"
+    ports:
+      - "8000:8000" # direct access in dev
+    volumes:
+      - ./app:/app/app # hot-reload: mount source code
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    networks:
+      - taskmanager_net
+
+  # ── PostgreSQL ───────────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    container_name: taskmanager_db_dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: taskmanager
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: devpassword123
+    ports:
+      - "5432:5432" # expose for local DB tools
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - taskmanager_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskuser -d taskmanager"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ────────────────────────────────────────────────
+  cache:
+    image: redis:7-alpine
+    container_name: taskmanager_cache_dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379" # expose for local Redis tools
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - taskmanager_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+
+networks:
+  taskmanager_net:
+    driver: bridge
