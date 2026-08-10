@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Task Analyzer — Day 30</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
+      header {
+        background: #1e293b;
+        padding: 1rem 2rem;
+        border-bottom: 1px solid #334155;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      header h1 {
+        font-size: 1.1rem;
+        color: #38bdf8;
+      }
+      header span {
+        font-size: 0.8rem;
+        color: #64748b;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      .input-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .input-card h2 {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 0.5rem;
+        color: #e2e8f0;
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        font-family: inherit;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+      label {
+        font-size: 0.75rem;
+        color: #64748b;
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+      button {
+        width: 100%;
+        padding: 0.75rem;
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      button:hover {
+        opacity: 0.85;
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .result-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .result-card h3 {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        margin-bottom: 1rem;
+      }
+      .priority-badge {
+        display: inline-block;
+        padding: 0.3rem 0.75rem;
+        border-radius: 9999px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+      }
+      .priority-urgent {
+        background: #3f1212;
+        color: #fca5a5;
+      }
+      .priority-high {
+        background: #422006;
+        color: #fdba74;
+      }
+      .priority-medium {
+        background: #1c3046;
+        color: #93c5fd;
+      }
+      .priority-low {
+        background: #1e3a2f;
+        color: #86efac;
+      }
+      .metric {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid #1e293b;
+        font-size: 0.85rem;
+      }
+      .metric:last-child {
+        border-bottom: none;
+      }
+      .metric .label {
+        color: #64748b;
+      }
+      .metric .value {
+        color: #e2e8f0;
+        font-weight: 500;
+      }
+      .prob-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.4rem;
+        font-size: 0.8rem;
+      }
+      .prob-label {
+        width: 60px;
+        color: #94a3b8;
+        text-transform: capitalize;
+      }
+      .prob-track {
+        flex: 1;
+        height: 6px;
+        background: #334155;
+        border-radius: 9999px;
+        overflow: hidden;
+      }
+      .prob-fill {
+        height: 100%;
+        border-radius: 9999px;
+        transition: width 0.5s ease;
+      }
+      .tag {
+        display: inline-block;
+        padding: 0.15rem 0.5rem;
+        background: #1e3a5f;
+        color: #93c5fd;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        margin: 0.15rem;
+      }
+      .explanation-item {
+        padding: 0.4rem 0;
+        font-size: 0.85rem;
+        border-bottom: 1px solid #0f172a;
+      }
+      .explanation-item:last-child {
+        border-bottom: none;
+      }
+      .models-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .model-box {
+        background: #0f172a;
+        border-radius: 0.5rem;
+        padding: 1rem;
+      }
+      .model-box h4 {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-bottom: 0.75rem;
+      }
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #64748b;
+      }
+      .spinner {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 3px solid #334155;
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .conf-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .agreement {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-top: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🤖 Unified AI Task Analyzer</h1>
+      <span
+        >Day 30 — Ensemble Pipeline: Random Forest + Neural Network + NLP</span
+      >
+    </header>
+
+    <div class="container">
+      <!-- Input Form -->
+      <div class="input-card">
+        <h2>Task Input</h2>
+        <label>Title *</label>
+        <input
+          type="text"
+          id="title"
+          placeholder="e.g. URGENT: Production API returning HTTP 500 errors"
+        />
+        <label>Description</label>
+        <textarea
+          id="description"
+          placeholder="Optional: More details about the task..."
+        ></textarea>
+        <div class="row">
+          <div>
+            <label>Has Due Date</label>
+            <select id="hasDueDate" onchange="toggleDueFields()">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label>Days Until Due</label>
+            <input type="number" id="daysUntilDue" value="7" step="0.5" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Estimated Hours</label>
+            <input
+              type="number"
+              id="estimatedHours"
+              placeholder="e.g. 2.5"
+              step="0.5"
+              min="0.25"
+            />
+          </div>
+          <div>
+            <label>Tags (comma-separated)</label>
+            <input
+              type="text"
+              id="tags"
+              placeholder="e.g. backend, bug, urgent"
+            />
+          </div>
+        </div>
+        <button onclick="analyze()" id="analyzeBtn">🔍 Analyze with AI</button>
+      </div>
+
+      <!-- Results -->
+      <div id="results" style="display: none">
+        <!-- Ensemble Final Result -->
+        <div class="result-card" style="border-color: #3b82f6">
+          <h3>🎯 Ensemble Decision</h3>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+              margin-bottom: 1rem;
+            "
+          >
+            <span class="priority-badge" id="finalBadge"></span>
+            <div>
+              <div class="conf-value" id="finalConf"></div>
+              <div class="agreement" id="agreementScore"></div>
+            </div>
+          </div>
+          <div id="probBars"></div>
+          <div style="margin-top: 1rem">
+            <div
+              style="font-size: 0.75rem; color: #64748b; margin-bottom: 0.5rem"
+            >
+              EXPLANATION
+            </div>
+            <div id="explanations"></div>
+          </div>
+        </div>
+
+        <!-- Individual Models -->
+        <div class="models-grid">
+          <div class="result-card">
+            <h3>🌲 Random Forest (Day 27)</h3>
+            <div id="rfResult"></div>
+          </div>
+          <div class="result-card">
+            <h3>🧠 Neural Network (Day 29)</h3>
+            <div id="nnResult"></div>
+          </div>
+        </div>
+
+        <!-- NLP Analysis -->
+        <div class="result-card">
+          <h3>📝 NLP Analysis (Day 28)</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+            <div>
+              <div class="metric">
+                <span class="label">Category</span
+                ><span class="value" id="nlpCategory"></span>
+              </div>
+              <div class="metric">
+                <span class="label">Sentiment</span
+                ><span class="value" id="nlpSentiment"></span>
+              </div>
+              <div class="metric">
+                <span class="label">Urgency</span
+                ><span class="value" id="nlpUrgency"></span>
+              </div>
+              <div class="metric">
+                <span class="label">Neg. Score</span
+                ><span class="value" id="nlpNegScore"></span>
+              </div>
+            </div>
+            <div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: #64748b;
+                  margin-bottom: 0.4rem;
+                "
+              >
+                SUGGESTED TAGS
+              </div>
+              <div id="suggestedTags"></div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: #64748b;
+                  margin: 0.5rem 0 0.4rem;
+                "
+              >
+                ENTITIES
+              </div>
+              <div
+                id="entities"
+                style="font-size: 0.8rem; color: #94a3b8"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="loading" style="display: none" class="loading">
+        <div class="spinner"></div>
+        <p style="margin-top: 0.5rem">Running AI pipeline...</p>
+      </div>
+    </div>
+
+    <script>
+      // ── Demo examples ────────────────────────────────────────
+      const demos = [
+        {
+          title: "URGENT: Production API returning HTTP 500 for all users",
+          description:
+            "All API endpoints failing after today's deployment. Customers cannot access the service.",
+          hasDueDate: true,
+          daysUntilDue: 0.1,
+          tags: "production, incident",
+          estimatedHours: 2,
+        },
+        {
+          title: "Fix login bug before Friday client demo",
+          description:
+            "Login fails with special characters in password. Affects 20% of users.",
+          hasDueDate: true,
+          daysUntilDue: 2,
+          tags: "bug, auth",
+          estimatedHours: 3,
+        },
+        {
+          title: "Add CSV export feature to dashboard",
+          description:
+            "Users want to export their task data as CSV for reporting.",
+          hasDueDate: false,
+          daysUntilDue: 14,
+          tags: "feature",
+          estimatedHours: 6,
+        },
+        {
+          title: "Research GraphQL for future API redesign",
+          description:
+            "Explore whether GraphQL would benefit our architecture.",
+          hasDueDate: false,
+          daysUntilDue: 30,
+          tags: "research",
+          estimatedHours: 4,
+        },
+      ];
+      let demoIdx = 0;
+
+      function loadDemo() {
+        const d = demos[demoIdx++ % demos.length];
+        document.getElementById("title").value = d.title;
+        document.getElementById("description").value = d.description;
+        document.getElementById("hasDueDate").value = String(d.hasDueDate);
+        document.getElementById("daysUntilDue").value = d.daysUntilDue;
+        document.getElementById("tags").value = d.tags;
+        document.getElementById("estimatedHours").value = d.estimatedHours;
+      }
+      loadDemo();
+
+      async function analyze() {
+        const title = document.getElementById("title").value.trim();
+        if (!title) {
+          alert("Please enter a task title");
+          return;
+        }
+
+        document.getElementById("results").style.display = "none";
+        document.getElementById("loading").style.display = "block";
+        document.getElementById("analyzeBtn").disabled = true;
+
+        const tagsRaw = document.getElementById("tags").value;
+        const tags = tagsRaw
+          ? tagsRaw
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : [];
+        const hasDueDate =
+          document.getElementById("hasDueDate").value === "true";
+        const estHours = parseFloat(
+          document.getElementById("estimatedHours").value,
+        );
+
+        const payload = {
+          title,
+          description:
+            document.getElementById("description").value.trim() || null,
+          has_due_date: hasDueDate,
+          is_overdue:
+            hasDueDate &&
+            parseFloat(document.getElementById("daysUntilDue").value) < 0,
+          days_until_due: hasDueDate
+            ? parseFloat(document.getElementById("daysUntilDue").value)
+            : 0,
+          tags,
+          estimated_hours: isNaN(estHours) ? null : estHours,
+        };
+
+        try {
+          const res = await fetch("/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) throw new Error(await res.text());
+          const data = await res.json();
+          renderResults(data);
+        } catch (e) {
+          alert("Error: " + e.message);
+        } finally {
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("analyzeBtn").disabled = false;
+        }
+      }
+
+      function renderResults(data) {
+        const priorityClasses = {
+          urgent: "priority-urgent",
+          high: "priority-high",
+          medium: "priority-medium",
+          low: "priority-low",
+        };
+        const priorityColors = {
+          urgent: "#ef4444",
+          high: "#f97316",
+          medium: "#3b82f6",
+          low: "#10b981",
+        };
+
+        const ens = data.ensemble;
+
+        // Final badge
+        const badge = document.getElementById("finalBadge");
+        badge.textContent = ens.predicted_priority.toUpperCase();
+        badge.className =
+          "priority-badge " + priorityClasses[ens.predicted_priority];
+
+        document.getElementById("finalConf").textContent =
+          (ens.confidence * 100).toFixed(0) + "% confidence";
+        document.getElementById("agreementScore").textContent =
+          `Model agreement: ${(ens.agreement_score * 100).toFixed(0)}%`;
+
+        // Probability bars
+        const bars = document.getElementById("probBars");
+        bars.innerHTML = "";
+        ["urgent", "high", "medium", "low"].forEach((p) => {
+          const prob = ens.probabilities[p] || 0;
+          bars.innerHTML += `
+        <div class="prob-bar">
+          <span class="prob-label">${p}</span>
+          <div class="prob-track">
+            <div class="prob-fill" style="width:${(prob * 100).toFixed(0)}%;background:${priorityColors[p]}"></div>
+          </div>
+          <span style="font-size:0.75rem;color:#64748b;width:38px;text-align:right">${(prob * 100).toFixed(0)}%</span>
+        </div>`;
+        });
+
+        // Explanations
+        const expls = document.getElementById("explanations");
+        expls.innerHTML = ens.explanation
+          .map((e) => `<div class="explanation-item">${e}</div>`)
+          .join("");
+
+        // RF result
+        const rfEl = document.getElementById("rfResult");
+        if (data.random_forest) {
+          const rf = data.random_forest;
+          rfEl.innerHTML = `
+        <span class="priority-badge ${priorityClasses[rf.predicted_priority]}">${rf.predicted_priority.toUpperCase()}</span>
+        <div style="margin-top:0.5rem;font-size:0.8rem;color:#94a3b8">Confidence: ${(rf.confidence * 100).toFixed(0)}%</div>`;
+        } else {
+          rfEl.innerHTML =
+            '<span style="color:#64748b;font-size:0.8rem">Not available</span>';
+        }
+
+        // NN result
+        const nnEl = document.getElementById("nnResult");
+        if (data.neural_network) {
+          const nn = data.neural_network;
+          nnEl.innerHTML = `
+        <span class="priority-badge ${priorityClasses[nn.predicted_priority]}">${nn.predicted_priority.toUpperCase()}</span>
+        <div style="margin-top:0.5rem;font-size:0.8rem;color:#94a3b8">Confidence: ${(nn.confidence * 100).toFixed(0)}%</div>`;
+        } else {
+          nnEl.innerHTML =
+            '<span style="color:#64748b;font-size:0.8rem">Not available</span>';
+        }
+
+        // NLP
+        const sentColors = {
+          positive: "#10b981",
+          negative: "#ef4444",
+          neutral: "#94a3b8",
+          mixed: "#f59e0b",
+        };
+        const urgColors = {
+          high: "#ef4444",
+          medium: "#f97316",
+          low: "#10b981",
+        };
+        document.getElementById("nlpCategory").textContent =
+          data.nlp.category.replace("_", " ");
+        document.getElementById("nlpSentiment").innerHTML =
+          `<span style="color:${sentColors[data.nlp.sentiment]}">${data.nlp.sentiment}</span>`;
+        document.getElementById("nlpUrgency").innerHTML =
+          `<span style="color:${urgColors[data.nlp.urgency_level]}">${data.nlp.urgency_level}</span>`;
+        document.getElementById("nlpNegScore").textContent =
+          data.nlp.negative_score.toFixed(1);
+
+        const tagsEl = document.getElementById("suggestedTags");
+        tagsEl.innerHTML = data.nlp.suggested_tags
+          .map((t) => `<span class="tag">${t}</span>`)
+          .join("");
+
+        const entEl = document.getElementById("entities");
+        const ents = [];
+        if (data.nlp.error_codes.length)
+          ents.push("Errors: " + data.nlp.error_codes.join(", "));
+        if (data.nlp.systems.length)
+          ents.push("Systems: " + data.nlp.systems.join(", "));
+        if (data.nlp.time_mentions.length)
+          ents.push("Time: " + data.nlp.time_mentions.join(", "));
+        entEl.textContent = ents.join(" · ") || "None detected";
+
+        document.getElementById("results").style.display = "block";
+        document
+          .getElementById("results")
+          .scrollIntoView({ behavior: "smooth" });
+
+        // Auto-load next demo
+        setTimeout(loadDemo, 500);
+      }
+    </script>
+  </body>
+</html>

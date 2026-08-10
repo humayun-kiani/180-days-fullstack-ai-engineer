@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+models_cache/*.pth
+models_cache/*.joblib
+models_cache/*.json
