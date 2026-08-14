@@ -42,41 +42,42 @@ This repository is:
 
 ## 📅 Daily Progress Log
 
-| Day                                             | Topic                                                          | Project Built                                         | Status  |
-| ----------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------- | ------- |
-| [Day 01](./Day-01-Dev-Setup-and-Python-Basics/) | Dev Setup + Python Basics                                      | Personal Introduction App                             | ✅ Done |
-| [Day 02](./Day-02-Variables-DataTypes-Strings/) | Variables, Data Types, Strings                                 | Mad Libs Generator                                    | ✅ Done |
-| [Day 03](./Day-03-Conditionals-Loops/)          | Conditionals & Loops                                           | Number Guessing Game                                  | ✅ Done |
-| [Day 04](./Day-04-Lists-Dicts-Tuples-Sets/)     | Lists, Dicts, Tuples, Sets                                     | Student Grade Calculator                              | ✅ Done |
-| [Day 05](./Day-05-Functions/)                   | Functions & Scope                                              | Expense Tracker                                       | ✅ Done |
-| [Day 06](./Day-06-File-IO-Error-Handling/)      | File I/O & Error Handling                                      | Persistent Expense Tracker                            | ✅ Done |
-| [Day 07](./Day-07-OOP-Classes/)                 | Object-Oriented Programming                                    | Bank Account System                                   | ✅ Done |
-| [Day 08](./Day-08-Modules-Packages-pip-Venv/)   | Modules, Packages, pip, Venv                                   | Python Toolkit                                        | ✅ Done |
-| [Day 09](./Day-09-HTTP-APIs-Requests/)          | HTTP, REST APIs, requests                                      | Weather CLI App                                       | ✅ Done |
-| [Day 10](./Day-10-Advanced-Python-Features/)    | Comprehensions, Generators, Decorators                         | Data Pipeline Script                                  | ✅ Done |
-| [Day 11](./Day-11-Regex-and-CLI-Tools/)         | Regex & CLI with argparse                                      | Log File Analyzer CLI                                 | ✅ Done |
-| [Day 12](./Day-12-Concurrency-Asyncio/)         | Threading, Multiprocessing, asyncio                            | Async News Fetcher                                    | ✅ Done |
-| [Day 13](./Day-13-Testing-with-pytest/)         | Testing: pytest, fixtures, mocking, coverage                   | Bank Account Test Suite                               | ✅ Done |
-| [Day 14](./Day-14-Docker-Containerization/)     | Docker, Compose, Multi-stage builds                            | Containerized Expense Tracker API                     | ✅ Done |
-| [Day 15](./Day-15-SQL-Fundamentals/)            | SQL: SELECT, JOIN, GROUP BY, Indexes                           | Student Analytics Database                            | ✅ Done |
-| [Day 16](./Day-16-PostgreSQL/)                  | PostgreSQL: JSONB, Arrays, Views, Triggers, FTS                | Blog Platform Database                                | ✅ Done |
-| [Day 17](./Day-17-SQLAlchemy-ORM/)              | SQLAlchemy ORM: Models, Sessions, Alembic                      | Blog ORM Layer                                        | ✅ Done |
-| [Day 18](./Day-18-MongoDB-Product-Catalog/)     | MongoDB: Documents, CRUD, Aggregation                          | E-commerce Product Catalog                            | ✅ Done |
-| [Day 19](./Day-19-Redis-Caching/)               | Redis: Strings, Hashes, Lists, Sets, Sorted Sets               | Smart Weather Cache                                   | ✅ Done |
-| [Day 20](./Day-20-FastAPI-REST-API/)            | FastAPI: REST API, Pydantic, DI, Middleware                    | Task Manager REST API                                 | ✅ Done |
-| [Day 21](./Day-21-FastAPI-Database/)            | FastAPI + SQLAlchemy + PostgreSQL + Alembic                    | DB-Backed Task Manager                                | ✅ Done |
-| [Day 22](./Day-22-FastAPI-Auth/)                | JWT, bcrypt, OAuth2, RBAC, Token Blacklist                     | Task Manager Auth System                              | ✅ Done |
-| [Day 23](./Day-23-WebSockets/)                  | WebSockets: Real-time, Rooms, Presence, Auth                   | Real-Time Task Board                                  | ✅ Done |
-| [Day 24](./Day-24-Testing-FastAPI/)             | pytest, TestClient, fixtures, coverage, WebSocket tests        | Task Manager Test Suite (91% coverage)                | ✅ Done |
-| [Day 25](./Day-25-Celery-Background-Tasks/)     | Celery: Task queues, Beat scheduler, Flower, retries           | Background Email & Report Worker                      | ✅ Done |
-| [Day 26](./Day-26-Deployment/)                  | Nginx, SSL, Docker Compose Production, VPS deployment          | Production Deployment Stack                           | ✅ Done |
-| [Day 27](./Day-27-ML-Task-Priority/)            | ML: scikit-learn, features, evaluation, Random Forest          | Task Priority Predictor (89% accuracy)                | ✅ Done |
-| [Day 28](./Day-28-NLP-Text-Analysis/)           | NLP: TF-IDF, text classification, sentiment, entity extraction | Task Description Analyzer (89% accuracy)              | ✅ Done |
-| [Day 29](./Day-29-Neural-Networks/)             | PyTorch: neurons, backprop, training loop, BatchNorm, Dropout  | Deep Learning Task Priority Predictor (88%+ accuracy) | ✅ Done |
-| [Day 30](./Day-30-AI-Integration/)              | Ensemble: RF + NN + NLP integration, confidence calibration    | Unified AI Task Analyzer                              | ✅ Done |
-| [Day 31](./Day-31-Embeddings-RAG/)              | Embeddings, ChromaDB, semantic search, RAG pipeline            | Task Knowledge Base API                               | ✅ Done |
-| ...                                             | ...                                                            | ...                                                   | ...     |
-| Day 180                                         | Job Applications & Offers                                      | —                                                     | ⏳      |
+| Day                                             | Topic                                                                | Project Built                                         | Status  |
+| ----------------------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------- | ------- |
+| [Day 01](./Day-01-Dev-Setup-and-Python-Basics/) | Dev Setup + Python Basics                                            | Personal Introduction App                             | ✅ Done |
+| [Day 02](./Day-02-Variables-DataTypes-Strings/) | Variables, Data Types, Strings                                       | Mad Libs Generator                                    | ✅ Done |
+| [Day 03](./Day-03-Conditionals-Loops/)          | Conditionals & Loops                                                 | Number Guessing Game                                  | ✅ Done |
+| [Day 04](./Day-04-Lists-Dicts-Tuples-Sets/)     | Lists, Dicts, Tuples, Sets                                           | Student Grade Calculator                              | ✅ Done |
+| [Day 05](./Day-05-Functions/)                   | Functions & Scope                                                    | Expense Tracker                                       | ✅ Done |
+| [Day 06](./Day-06-File-IO-Error-Handling/)      | File I/O & Error Handling                                            | Persistent Expense Tracker                            | ✅ Done |
+| [Day 07](./Day-07-OOP-Classes/)                 | Object-Oriented Programming                                          | Bank Account System                                   | ✅ Done |
+| [Day 08](./Day-08-Modules-Packages-pip-Venv/)   | Modules, Packages, pip, Venv                                         | Python Toolkit                                        | ✅ Done |
+| [Day 09](./Day-09-HTTP-APIs-Requests/)          | HTTP, REST APIs, requests                                            | Weather CLI App                                       | ✅ Done |
+| [Day 10](./Day-10-Advanced-Python-Features/)    | Comprehensions, Generators, Decorators                               | Data Pipeline Script                                  | ✅ Done |
+| [Day 11](./Day-11-Regex-and-CLI-Tools/)         | Regex & CLI with argparse                                            | Log File Analyzer CLI                                 | ✅ Done |
+| [Day 12](./Day-12-Concurrency-Asyncio/)         | Threading, Multiprocessing, asyncio                                  | Async News Fetcher                                    | ✅ Done |
+| [Day 13](./Day-13-Testing-with-pytest/)         | Testing: pytest, fixtures, mocking, coverage                         | Bank Account Test Suite                               | ✅ Done |
+| [Day 14](./Day-14-Docker-Containerization/)     | Docker, Compose, Multi-stage builds                                  | Containerized Expense Tracker API                     | ✅ Done |
+| [Day 15](./Day-15-SQL-Fundamentals/)            | SQL: SELECT, JOIN, GROUP BY, Indexes                                 | Student Analytics Database                            | ✅ Done |
+| [Day 16](./Day-16-PostgreSQL/)                  | PostgreSQL: JSONB, Arrays, Views, Triggers, FTS                      | Blog Platform Database                                | ✅ Done |
+| [Day 17](./Day-17-SQLAlchemy-ORM/)              | SQLAlchemy ORM: Models, Sessions, Alembic                            | Blog ORM Layer                                        | ✅ Done |
+| [Day 18](./Day-18-MongoDB-Product-Catalog/)     | MongoDB: Documents, CRUD, Aggregation                                | E-commerce Product Catalog                            | ✅ Done |
+| [Day 19](./Day-19-Redis-Caching/)               | Redis: Strings, Hashes, Lists, Sets, Sorted Sets                     | Smart Weather Cache                                   | ✅ Done |
+| [Day 20](./Day-20-FastAPI-REST-API/)            | FastAPI: REST API, Pydantic, DI, Middleware                          | Task Manager REST API                                 | ✅ Done |
+| [Day 21](./Day-21-FastAPI-Database/)            | FastAPI + SQLAlchemy + PostgreSQL + Alembic                          | DB-Backed Task Manager                                | ✅ Done |
+| [Day 22](./Day-22-FastAPI-Auth/)                | JWT, bcrypt, OAuth2, RBAC, Token Blacklist                           | Task Manager Auth System                              | ✅ Done |
+| [Day 23](./Day-23-WebSockets/)                  | WebSockets: Real-time, Rooms, Presence, Auth                         | Real-Time Task Board                                  | ✅ Done |
+| [Day 24](./Day-24-Testing-FastAPI/)             | pytest, TestClient, fixtures, coverage, WebSocket tests              | Task Manager Test Suite (91% coverage)                | ✅ Done |
+| [Day 25](./Day-25-Celery-Background-Tasks/)     | Celery: Task queues, Beat scheduler, Flower, retries                 | Background Email & Report Worker                      | ✅ Done |
+| [Day 26](./Day-26-Deployment/)                  | Nginx, SSL, Docker Compose Production, VPS deployment                | Production Deployment Stack                           | ✅ Done |
+| [Day 27](./Day-27-ML-Task-Priority/)            | ML: scikit-learn, features, evaluation, Random Forest                | Task Priority Predictor (89% accuracy)                | ✅ Done |
+| [Day 28](./Day-28-NLP-Text-Analysis/)           | NLP: TF-IDF, text classification, sentiment, entity extraction       | Task Description Analyzer (89% accuracy)              | ✅ Done |
+| [Day 29](./Day-29-Neural-Networks/)             | PyTorch: neurons, backprop, training loop, BatchNorm, Dropout        | Deep Learning Task Priority Predictor (88%+ accuracy) | ✅ Done |
+| [Day 30](./Day-30-AI-Integration/)              | Ensemble: RF + NN + NLP integration, confidence calibration          | Unified AI Task Analyzer                              | ✅ Done |
+| [Day 31](./Day-31-Embeddings-RAG/)              | Embeddings, ChromaDB, semantic search, RAG pipeline                  | Task Knowledge Base API                               | ✅ Done |
+| [Day 32](./Day-32-LLM-RAG-Chatbot/)             | Anthropic API, prompt engineering, RAG, streaming, structured output | RAG Chatbot with Claude                               | ✅ Done |
+| ...                                             | ...                                                                  | ...                                                   | ...     |
+| Day 180                                         | Job Applications & Offers                                            | —                                                     | ⏳      |
 
 > ✅ Done &nbsp;|&nbsp; 🔄 In Progress &nbsp;|&nbsp; ⏳ Upcoming
 
