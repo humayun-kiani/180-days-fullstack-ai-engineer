@@ -77,6 +77,7 @@ This repository is:
 | [Day 31](./Day-31-Embeddings-RAG/)              | Embeddings, ChromaDB, semantic search, RAG pipeline                  | Task Knowledge Base API                               | ✅ Done |
 | [Day 32](./Day-32-LLM-RAG-Chatbot/)             | Anthropic API, prompt engineering, RAG, streaming, structured output | RAG Chatbot with Claude                               | ✅ Done |
 | [Day 33](./Day-33-LangChain-Agent/)             | LangChain: LCEL, agents, tools, memory, document chains              | Task Management AI Agent                              | ✅ Done |
+| [Day 34](./Day-34-AI-Code-Reviewer/)            | Raw tool use API, custom ToolRegistry, agentic loop, AST analysis    | AI Code Reviewer                                      | ✅ Done |
 | ...                                             | ...                                                                  | ...                                                   | ...     |
 | Day 180                                         | Job Applications & Offers                                            | —                                                     | ⏳      |
 
