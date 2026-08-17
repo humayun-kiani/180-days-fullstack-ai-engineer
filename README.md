@@ -78,6 +78,7 @@ This repository is:
 | [Day 32](./Day-32-LLM-RAG-Chatbot/)             | Anthropic API, prompt engineering, RAG, streaming, structured output | RAG Chatbot with Claude                               | ✅ Done |
 | [Day 33](./Day-33-LangChain-Agent/)             | LangChain: LCEL, agents, tools, memory, document chains              | Task Management AI Agent                              | ✅ Done |
 | [Day 34](./Day-34-AI-Code-Reviewer/)            | Raw tool use API, custom ToolRegistry, agentic loop, AST analysis    | AI Code Reviewer                                      | ✅ Done |
+| [Day 35](./Day-35-AI-API-Hub/)                  | httpx, async API calls, rate limiting, parallel fetching             | AI API Hub (5 real APIs)                              | ✅ Done |
 | ...                                             | ...                                                                  | ...                                                   | ...     |
 | Day 180                                         | Job Applications & Offers                                            | —                                                     | ⏳      |
 
