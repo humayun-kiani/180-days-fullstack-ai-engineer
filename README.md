@@ -80,6 +80,7 @@ This repository is:
 | [Day 34](./Day-34-AI-Code-Reviewer/)            | Raw tool use API, custom ToolRegistry, agentic loop, AST analysis    | AI Code Reviewer                                      | ✅ Done |
 | [Day 35](./Day-35-AI-API-Hub/)                  | httpx, async API calls, rate limiting, parallel fetching             | AI API Hub (5 real APIs)                              | ✅ Done |
 | [Day 36](./Day-36-AI-Research-Assistant/)       | Week 6 integration: routing, parallel fetch, context fusion          | AI Research Assistant                                 | ✅ Done |
+| [Day 37](./Day-37-Eval-Harness/)                | Eval harnesses, metrics, JSONL data gen, fine-tuning concepts        | Task Priority Eval Harness                            | ✅ Done |
 | ...                                             | ...                                                                  | ...                                                   | ...     |
 | Day 180                                         | Job Applications & Offers                                            | —                                                     | ⏳      |
 
