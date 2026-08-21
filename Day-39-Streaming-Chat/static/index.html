@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Chat — Day 39</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background: #1e293b;
+        border-bottom: 1px solid #334155;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      header h1 {
+        font-size: 1rem;
+        color: #38bdf8;
+      }
+      header span {
+        font-size: 0.75rem;
+        color: #64748b;
+      }
+
+      .mode-badge {
+        background: #1e3a2f;
+        color: #86efac;
+        padding: 0.2rem 0.6rem;
+        border-radius: 9999px;
+        font-size: 0.7rem;
+      }
+      .mode-badge.mock {
+        background: #2d1b0e;
+        color: #fdba74;
+      }
+
+      /* Chat container */
+      #chat {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      /* Messages */
+      .message {
+        max-width: 75%;
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        line-height: 1.6;
+        font-size: 0.875rem;
+        animation: fadeIn 0.2s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message.user {
+        align-self: flex-end;
+        background: #1d4ed8;
+        color: white;
+      }
+
+      .message.assistant {
+        align-self: flex-start;
+        background: #1e293b;
+        border: 1px solid #334155;
+        white-space: pre-wrap;
+        max-width: 85%;
+      }
+
+      .message.assistant code {
+        background: #0f172a;
+        padding: 0.1rem 0.3rem;
+        border-radius: 0.25rem;
+        font-family: "Courier New", monospace;
+        font-size: 0.8rem;
+        color: #7dd3fc;
+      }
+
+      .message.assistant pre {
+        background: #0f172a;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 0.5rem 0;
+        font-size: 0.8rem;
+      }
+
+      .message.assistant strong {
+        color: #f8fafc;
+      }
+
+      /* Stage indicators */
+      .stage-indicator {
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: #64748b;
+        padding: 0.3rem 0;
+      }
+
+      .stage-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #3b82f6;
+        animation: pulse 1s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      /* Sources */
+      .sources {
+        align-self: flex-start;
+        font-size: 0.7rem;
+        color: #64748b;
+        margin-top: -0.5rem;
+      }
+
+      .source-tag {
+        display: inline-block;
+        background: #1e293b;
+        border: 1px solid #334155;
+        padding: 0.1rem 0.4rem;
+        border-radius: 0.25rem;
+        margin: 0.1rem;
+      }
+
+      /* Typing cursor */
+      .cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1em;
+        background: #38bdf8;
+        margin-left: 1px;
+        animation: blink 0.8s step-end infinite;
+        vertical-align: text-bottom;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* Input area */
+      #input-area {
+        background: #1e293b;
+        border-top: 1px solid #334155;
+        padding: 1rem 1.5rem;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 0.5rem;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      #user-input {
+        flex: 1;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 0.5rem;
+        padding: 0.6rem 0.875rem;
+        color: #e2e8f0;
+        font-family: inherit;
+        font-size: 0.875rem;
+        resize: none;
+        max-height: 200px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      #user-input:focus {
+        border-color: #3b82f6;
+      }
+
+      #send-btn {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+      }
+
+      #send-btn:hover {
+        opacity: 0.85;
+      }
+      #send-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .controls {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-top: 0.5rem;
+      }
+
+      .control-btn {
+        background: none;
+        border: 1px solid #334155;
+        color: #64748b;
+        border-radius: 0.375rem;
+        padding: 0.25rem 0.625rem;
+        font-size: 0.7rem;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .control-btn:hover {
+        border-color: #3b82f6;
+        color: #93c5fd;
+      }
+
+      .control-btn.active {
+        border-color: #3b82f6;
+        color: #38bdf8;
+        background: #1e3a5f;
+      }
+
+      /* Token counter */
+      #stats {
+        font-size: 0.65rem;
+        color: #475569;
+        text-align: center;
+        margin-top: 0.25rem;
+      }
+
+      /* Welcome screen */
+      #welcome {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        gap: 1rem;
+        color: #475569;
+      }
+
+      #welcome h2 {
+        font-size: 1.5rem;
+        color: #94a3b8;
+      }
+      #welcome p {
+        font-size: 0.875rem;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      .example-queries {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .example-btn {
+        background: #1e293b;
+        border: 1px solid #334155;
+        color: #94a3b8;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.15s;
+      }
+
+      .example-btn:hover {
+        border-color: #3b82f6;
+        color: #e2e8f0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🤖 AI Chat — Day 39: Streaming</h1>
+      <div style="display: flex; align-items: center; gap: 0.75rem">
+        <span id="mode-badge" class="mode-badge mock">Loading...</span>
+        <span id="token-stats" style="font-size: 0.7rem; color: #475569"></span>
+      </div>
+    </header>
+
+    <div id="chat">
+      <div id="welcome">
+        <h2>Real-Time AI Chat</h2>
+        <p>
+          Responses stream token-by-token, just like ChatGPT. Watch the
+          knowledge base retrieval stage before generation starts.
+        </p>
+        <div class="example-queries">
+          <button class="example-btn" onclick="sendExample(this)">
+            How do I fix JWT expiration errors?
+          </button>
+          <button class="example-btn" onclick="sendExample(this)">
+            My API returns 500 errors after deployment
+          </button>
+          <button class="example-btn" onclick="sendExample(this)">
+            Why is my database query slow?
+          </button>
+          <button class="example-btn" onclick="sendExample(this)">
+            How do I configure Redis caching?
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="input-area">
+      <div class="input-row">
+        <textarea
+          id="user-input"
+          placeholder="Ask anything about debugging, auth, performance, Docker..."
+          rows="1"
+        ></textarea>
+        <button id="send-btn" onclick="sendMessage()">Send ↑</button>
+      </div>
+      <div class="controls">
+        <button
+          class="control-btn active"
+          id="toggle-rag"
+          onclick="toggleMode('rag')"
+        >
+          📚 RAG Pipeline
+        </button>
+        <button
+          class="control-btn"
+          id="toggle-direct"
+          onclick="toggleMode('direct')"
+        >
+          ⚡ Direct Chat
+        </button>
+        <button class="control-btn" onclick="clearChat()">🗑 Clear</button>
+      </div>
+      <div id="stats"></div>
+    </div>
+
+    <script>
+      // ── State ─────────────────────────────────────────────────
+      let mode = "rag"; // 'rag' or 'direct'
+      let isStreaming = false;
+      let history = [];
+      let totalTokens = 0;
+      let sessionStart = Date.now();
+
+      // ── Init ──────────────────────────────────────────────────
+      async function init() {
+        try {
+          const r = await fetch("/health");
+          const data = await r.json();
+          const badge = document.getElementById("mode-badge");
+          if (data.mock) {
+            badge.textContent = "⚠️ Mock Mode (no API key)";
+            badge.className = "mode-badge mock";
+          } else {
+            badge.textContent = "✅ Claude API Connected";
+            badge.className = "mode-badge";
+          }
+        } catch (e) {
+          console.error("Health check failed:", e);
+        }
+      }
+      init();
+
+      // ── Mode toggle ───────────────────────────────────────────
+      function toggleMode(newMode) {
+        mode = newMode;
+        document.getElementById("toggle-rag").className =
+          "control-btn" + (mode === "rag" ? " active" : "");
+        document.getElementById("toggle-direct").className =
+          "control-btn" + (mode === "direct" ? " active" : "");
+      }
+
+      // ── Textarea auto-resize ──────────────────────────────────
+      const textarea = document.getElementById("user-input");
+      textarea.addEventListener("input", () => {
+        textarea.style.height = "auto";
+        textarea.style.height = Math.min(textarea.scrollHeight, 200) + "px";
+      });
+
+      textarea.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // ── Send message ──────────────────────────────────────────
+      function sendExample(btn) {
+        textarea.value = btn.textContent;
+        sendMessage();
+      }
+
+      async function sendMessage() {
+        const msg = textarea.value.trim();
+        if (!msg || isStreaming) return;
+
+        // Hide welcome screen
+        const welcome = document.getElementById("welcome");
+        if (welcome) welcome.remove();
+
+        // Add user message
+        addMessage(msg, "user");
+        history.push({ role: "user", content: msg });
+        textarea.value = "";
+        textarea.style.height = "auto";
+
+        // Start streaming
+        isStreaming = true;
+        document.getElementById("send-btn").disabled = true;
+
+        const endpoint = mode === "rag" ? "/stream/pipeline" : "/stream/chat";
+        await streamResponse(endpoint, msg);
+
+        isStreaming = false;
+        document.getElementById("send-btn").disabled = false;
+        textarea.focus();
+      }
+
+      // ── Stream response ───────────────────────────────────────
+      async function streamResponse(endpoint, message) {
+        const chat = document.getElementById("chat");
+
+        // Create assistant message container
+        const msgEl = document.createElement("div");
+        msgEl.className = "message assistant";
+        msgEl.innerHTML = '<span class="cursor"></span>';
+        chat.appendChild(msgEl);
+        scrollToBottom();
+
+        let stageEl = null;
+        let fullText = "";
+        let tokensGenerated = 0;
+        let sources = [];
+
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message,
+              history: history.slice(0, -1), // exclude current message
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const events = buffer.split("\n\n");
+            buffer = events.pop();
+
+            for (const eventStr of events) {
+              if (!eventStr.trim()) continue;
+              const dataLine = eventStr.replace(/^data: /, "");
+
+              if (dataLine === "[DONE]") continue;
+
+              let event;
+              try {
+                event = JSON.parse(dataLine);
+              } catch (e) {
+                continue;
+              }
+
+              if (event.type === "stage") {
+                // Show/update stage indicator
+                if (!stageEl) {
+                  stageEl = document.createElement("div");
+                  stageEl.className = "stage-indicator";
+                  chat.insertBefore(stageEl, msgEl);
+                }
+                stageEl.innerHTML = `<div class="stage-dot"></div>${event.message}`;
+                if (event.articles) {
+                  stageEl.innerHTML += ` (${event.articles.join(", ")})`;
+                }
+                scrollToBottom();
+              } else if (event.type === "token" && event.content) {
+                // Append token to message
+                fullText += event.content;
+                tokensGenerated++;
+
+                // Remove stage indicator once tokens start
+                if (stageEl) {
+                  stageEl.remove();
+                  stageEl = null;
+                }
+
+                // Render with cursor
+                msgEl.innerHTML =
+                  renderMarkdown(fullText) + '<span class="cursor"></span>';
+                scrollToBottom();
+              } else if (event.type === "sources" && event.sources) {
+                sources = event.sources;
+              } else if (event.type === "done") {
+                tokensGenerated = event.tokens_generated || tokensGenerated;
+              } else if (event.type === "error") {
+                msgEl.innerHTML = `<span style="color:#ef4444">⚠️ ${event.message}</span>`;
+              }
+            }
+          }
+
+          // Finalize message (remove cursor)
+          msgEl.innerHTML = renderMarkdown(fullText);
+
+          // Add sources
+          if (sources.length > 0) {
+            const srcEl = document.createElement("div");
+            srcEl.className = "sources";
+            srcEl.innerHTML =
+              "📚 Sources: " +
+              sources
+                .map((s) => `<span class="source-tag">${s}</span>`)
+                .join("");
+            chat.appendChild(srcEl);
+          }
+
+          // Remove stage indicator if still visible
+          if (stageEl) stageEl.remove();
+
+          // Add to history
+          history.push({ role: "assistant", content: fullText });
+
+          // Update stats
+          totalTokens += tokensGenerated;
+          updateStats(tokensGenerated);
+        } catch (err) {
+          msgEl.innerHTML = `<span style="color:#ef4444">⚠️ Error: ${err.message}</span>`;
+          if (stageEl) stageEl.remove();
+        }
+
+        scrollToBottom();
+      }
+
+      // ── UI helpers ────────────────────────────────────────────
+      function addMessage(text, role) {
+        const chat = document.getElementById("chat");
+        const el = document.createElement("div");
+        el.className = `message ${role}`;
+        el.textContent = text;
+        chat.appendChild(el);
+        scrollToBottom();
+      }
+
+      function scrollToBottom() {
+        const chat = document.getElementById("chat");
+        // Only auto-scroll if near the bottom
+        const distFromBottom =
+          chat.scrollHeight - chat.scrollTop - chat.clientHeight;
+        if (distFromBottom < 150) {
+          chat.scrollTop = chat.scrollHeight;
+        }
+      }
+
+      function clearChat() {
+        const chat = document.getElementById("chat");
+        chat.innerHTML = "";
+        history = [];
+        totalTokens = 0;
+        document.getElementById("stats").textContent = "";
+
+        // Restore welcome
+        const welcome = document.createElement("div");
+        welcome.id = "welcome";
+        welcome.innerHTML = `
+      <h2>Real-Time AI Chat</h2>
+      <p>Responses stream token-by-token. Watch the knowledge base retrieval stage before generation.</p>
+      <div class="example-queries">
+        <button class="example-btn" onclick="sendExample(this)">How do I fix JWT expiration errors?</button>
+        <button class="example-btn" onclick="sendExample(this)">My API returns 500 errors after deployment</button>
+        <button class="example-btn" onclick="sendExample(this)">Why is my database query slow?</button>
+      </div>`;
+        chat.appendChild(welcome);
+      }
+
+      function updateStats(tokensInResponse) {
+        const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+        document.getElementById("stats").textContent =
+          `${tokensInResponse} tokens in this response | ${totalTokens} total | ${elapsed}s session`;
+      }
+
+      // ── Minimal Markdown renderer ─────────────────────────────
+      function renderMarkdown(text) {
+        return (
+          text
+            // Code blocks
+            .replace(/```(\w*)\n?([\s\S]*?)```/g, "<pre><code>$2</code></pre>")
+            // Inline code
+            .replace(/`([^`]+)`/g, "<code>$1</code>")
+            // Bold
+            .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+            // Italic
+            .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+            // Headers
+            .replace(
+              /^### (.+)$/gm,
+              '<h3 style="color:#94a3b8;font-size:0.9rem;margin:0.5rem 0 0.25rem">$1</h3>',
+            )
+            .replace(
+              /^## (.+)$/gm,
+              '<h2 style="color:#e2e8f0;font-size:1rem;margin:0.5rem 0 0.25rem">$2</h2>',
+            )
+            .replace(
+              /^# (.+)$/gm,
+              '<h1 style="color:#f8fafc;font-size:1.1rem;margin:0.5rem 0 0.25rem">$1</h1>',
+            )
+            // Numbered lists
+            .replace(
+              /^\d+\. (.+)$/gm,
+              '<div style="padding-left:1rem">$1</div>',
+            )
+            // Bullet lists
+            .replace(
+              /^[-*] (.+)$/gm,
+              '<div style="padding-left:1rem">• $1</div>',
+            )
+            // Line breaks
+            .replace(/\n/g, "<br>")
+        );
+      }
+    </script>
+  </body>
+</html>

@@ -82,6 +82,7 @@ This repository is:
 | [Day 36](./Day-36-AI-Research-Assistant/)       | Week 6 integration: routing, parallel fetch, context fusion          | AI Research Assistant                                 | ✅ Done |
 | [Day 37](./Day-37-Eval-Harness/)                | Eval harnesses, metrics, JSONL data gen, fine-tuning concepts        | Task Priority Eval Harness                            | ✅ Done |
 | [Day 38](./Day-38-Guardrails/)                  | Prompt injection, red-teaming, PII filtering, bias tests             | AI Safety Guardrail System                            | ✅ Done |
+| [Day 39](./Day-39-Streaming-Chat/)              | SSE, StreamingResponse, Anthropic streaming, real-time UI            | AI Chat Interface                                     | ✅ Done |
 | ...                                             | ...                                                                  | ...                                                   | ...     |
 | Day 180                                         | Job Applications & Offers                                            | —                                                     | ⏳      |
 
