@@ -85,6 +85,7 @@ This repository is:
 | [Day 39](./Day-39-Streaming-Chat/)              | SSE, StreamingResponse, Anthropic streaming, real-time UI                      | AI Chat Interface                                     | ✅ Done |
 | [Day 40](./Day-40-Production-AI/)               | Production AI patterns: health, budget, degradation, metrics                   | Production AI Service                                 | ✅ Done |
 | [Day 41](./Day-41-Microservices/)               | Microservices: API gateway, service mesh, circuit breaker, distributed tracing | 3-Service Task Manager                                | ✅ Done |
+| [Day 42](./Day-42-Event-Driven/)                | Event-driven architecture, message queues, Redis Streams, DLQ                  | Task Event System                                     | ✅ Done |
 | ...                                             | ...                                                                            | ...                                                   | ...     |
 | Day 180                                         | Job Applications & Offers                                                      | —                                                     | ⏳      |
 
