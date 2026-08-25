@@ -86,6 +86,7 @@ This repository is:
 | [Day 40](./Day-40-Production-AI/)               | Production AI patterns: health, budget, degradation, metrics                   | Production AI Service                                 | ✅ Done |
 | [Day 41](./Day-41-Microservices/)               | Microservices: API gateway, service mesh, circuit breaker, distributed tracing | 3-Service Task Manager                                | ✅ Done |
 | [Day 42](./Day-42-Event-Driven/)                | Event-driven architecture, message queues, Redis Streams, DLQ                  | Task Event System                                     | ✅ Done |
+| [Day 43](./Day-43-Caching/)                     | Multi-layer caching, cache-aside, stampede protection, TTL                     | High-Performance Task API                             | ✅ Done |
 | ...                                             | ...                                                                            | ...                                                   | ...     |
 | Day 180                                         | Job Applications & Offers                                                      | —                                                     | ⏳      |
 
