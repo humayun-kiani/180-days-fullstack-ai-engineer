@@ -1,0 +1,157 @@
+# .github/workflows/cd.yml
+# Deployment pipeline — runs only on main branch after CI passes
+
+name: CD
+
+on:
+  push:
+    branches: [main] # Only deploy from main
+
+  # Allow manual trigger with reason
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deploy to environment"
+        required: true
+        default: "staging"
+        type: choice
+        options: [staging, production]
+      reason:
+        description: "Reason for manual deploy"
+        required: false
+
+jobs:
+  # ── Deploy to Staging ─────────────────────────────────────
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    environment: staging # GitHub environment (requires approval setup)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate deployment info
+        id: deploy-info
+        run: |
+          echo "version=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+          echo "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+          echo "deployer=${{ github.actor }}" >> $GITHUB_OUTPUT
+
+      - name: Simulate staging deploy
+        run: |
+          echo "🚀 Deploying to STAGING..."
+          echo "Version: ${{ steps.deploy-info.outputs.version }}"
+          echo "Deployer: ${{ steps.deploy-info.outputs.deployer }}"
+          echo "Time: ${{ steps.deploy-info.outputs.timestamp }}"
+          echo ""
+          echo "In production, this would:"
+          echo "  1. Login to container registry"
+          echo "  2. Pull new image: task-api:${{ steps.deploy-info.outputs.version }}"
+          echo "  3. Rolling update: kubectl set image deployment/task-api ..."
+          echo "  4. Wait for rollout: kubectl rollout status ..."
+          echo ""
+          echo "✅ Staging deployment simulated successfully"
+
+      - name: Run staging smoke tests
+        run: |
+          echo "🔍 Running smoke tests on staging..."
+          echo ""
+          echo "In production, this would:"
+          echo "  curl https://staging-api.yourdomain.com/health"
+          echo "  Run integration test suite against staging"
+          echo ""
+          # Simulate smoke tests passing
+          sleep 2
+          echo "✅ Smoke tests passed"
+
+      - name: Create deployment record
+        run: |
+          mkdir -p deployment-records
+          cat > deployment-records/staging-${{ steps.deploy-info.outputs.version }}.json << EOF
+          {
+            "version": "${{ steps.deploy-info.outputs.version }}",
+            "environment": "staging",
+            "deployed_by": "${{ steps.deploy-info.outputs.deployer }}",
+            "deployed_at": "${{ steps.deploy-info.outputs.timestamp }}",
+            "commit": "${{ github.sha }}",
+            "status": "success"
+          }
+          EOF
+          cat deployment-records/staging-${{ steps.deploy-info.outputs.version }}.json
+
+      - name: Upload deployment record
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-deployment-${{ steps.deploy-info.outputs.version }}
+          path: deployment-records/
+          retention-days: 30
+
+  # ── Deploy to Production ──────────────────────────────────
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: deploy-staging # Must succeed in staging first
+    environment: production # Requires manual approval in GitHub UI
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate deployment info
+        id: deploy-info
+        run: |
+          echo "version=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+          echo "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+
+      - name: Blue-Green deploy simulation
+        run: |
+          echo "🚀 Starting PRODUCTION deployment (Blue-Green)..."
+          echo ""
+          echo "Phase 1: Deploy to GREEN environment"
+          echo "  Pull task-api:${{ steps.deploy-info.outputs.version }}"
+          echo "  Start green deployment"
+          sleep 1
+
+          echo ""
+          echo "Phase 2: Health check GREEN environment"
+          echo "  GET https://green.task-api.internal/health → 200 OK"
+          sleep 1
+
+          echo ""
+          echo "Phase 3: Switch traffic to GREEN"
+          echo "  Update load balancer: 100% → GREEN"
+          sleep 1
+
+          echo ""
+          echo "Phase 4: Monitor for 2 minutes"
+          echo "  Error rate: 0.01% (below 1% threshold)"
+          echo "  P99 latency: 145ms (below 500ms threshold)"
+          sleep 1
+
+          echo ""
+          echo "Phase 5: Decommission BLUE"
+          echo "  Scale down old deployment"
+          echo ""
+          echo "✅ Production deployment complete!"
+          echo "   Version: ${{ steps.deploy-info.outputs.version }}"
+          echo "   Deployed by: ${{ github.actor }}"
+
+      - name: Post-deployment health check
+        run: |
+          echo "🏥 Post-deployment health checks..."
+          echo ""
+          echo "  ✅ Health endpoint: healthy"
+          echo "  ✅ Database connectivity: OK"
+          echo "  ✅ Error rate: 0.01%"
+          echo "  ✅ P99 latency: 145ms"
+          echo ""
+          echo "🎉 Deployment verified!"
+
+      - name: Notify deployment success
+        run: |
+          echo "📣 Deployment notification sent:"
+          echo "  Channel: #deployments"
+          echo "  Message: ✅ task-api v${{ steps.deploy-info.outputs.version }} deployed to production"
+          echo "  Author: ${{ github.actor }}"
+          echo "  Commit: ${{ github.sha }}"

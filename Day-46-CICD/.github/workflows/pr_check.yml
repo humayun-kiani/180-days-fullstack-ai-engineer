@@ -1,0 +1,104 @@
+# .github/workflows/pr_check.yml
+# Additional checks specific to Pull Requests
+
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # ── PR Title Check ────────────────────────────────────────
+  pr-title:
+    name: Check PR Title Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR title follows convention
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $TITLE"
+
+          # Enforce conventional commits format
+          # Examples: feat: add dark mode, fix: login bug, chore: update deps
+          if echo "$TITLE" | grep -qE "^(feat|fix|chore|docs|refactor|test|style|perf|ci)(\(.+\))?: .{3,}"; then
+            echo "✅ PR title follows conventional commits format"
+          else
+            echo "❌ PR title must follow format: type(scope): description"
+            echo "   Valid types: feat, fix, chore, docs, refactor, test, style, perf, ci"
+            echo "   Examples:"
+            echo "     feat: add task filtering by date"
+            echo "     fix: resolve 404 on task update"
+            echo "     chore: upgrade fastapi to 0.115"
+            exit 1
+          fi
+
+  # ── Size Check ────────────────────────────────────────────
+  pr-size:
+    name: Check PR Size
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Need full history for diff
+
+      - name: Check PR is not too large
+        run: |
+          # Count changed lines
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+
+          CHANGES=$(git diff --stat $BASE..$HEAD | tail -1 | grep -oP '\d+ insertion' | grep -oP '\d+' || echo "0")
+          echo "Lines changed: $CHANGES"
+
+          if [ "$CHANGES" -gt 1000 ]; then
+            echo "⚠️  WARNING: This PR changes more than 1000 lines."
+            echo "   Large PRs are harder to review. Consider splitting into smaller PRs."
+            # Don't fail — just warn
+          else
+            echo "✅ PR size is reasonable ($CHANGES lines changed)"
+          fi
+
+  # ── Quick Test Run ────────────────────────────────────────
+  pr-test:
+    name: Quick Test on PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --tb=short
+        env:
+          PYTHONPATH: "."
+
+      - name: Comment test results on PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const result = '${{ job.status }}';
+            const emoji = result === 'success' ? '✅' : '❌';
+            const message = result === 'success'
+              ? '✅ All tests passed! Ready for review.'
+              : '❌ Tests failed. Please fix before merging.';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ${emoji} Automated Test Results\n\n${message}\n\n**Commit:** \`${context.sha.substring(0,8)}\`\n**Branch:** \`${context.ref}\``
+            });

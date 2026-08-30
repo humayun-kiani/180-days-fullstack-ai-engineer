@@ -1,0 +1,82 @@
+# .github/workflows/security.yml
+# Security scanning — runs weekly and on dependency changes
+
+name: Security Scan
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Every Monday at 9am UTC
+  push:
+    paths:
+      - "requirements*.txt" # Only when dependencies change
+      - "Dockerfile"
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  security-scan:
+    name: Dependency & Code Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install security tools
+        run: |
+          pip install safety bandit
+          pip install -r requirements.txt
+
+      - name: Check for known vulnerabilities (Safety)
+        run: |
+          echo "🔍 Scanning dependencies for known vulnerabilities..."
+          safety check --full-report || true
+          # '|| true' prevents pipeline failure on findings
+          # In production: remove '|| true' to fail on critical CVEs
+
+      - name: Static security analysis (Bandit)
+        run: |
+          echo "🔍 Running static security analysis..."
+          bandit -r app/ \
+            -f json \
+            -o bandit-report.json \
+            --severity-level medium || true
+
+          echo "Bandit scan complete. Results:"
+          python3 -c "
+          import json
+          with open('bandit-report.json') as f:
+              data = json.load(f)
+          results = data.get('results', [])
+          if not results:
+              print('✅ No security issues found')
+          else:
+              for r in results[:5]:
+                  print(f'  ⚠️  {r[\"issue_severity\"]}: {r[\"issue_text\"]} in {r[\"filename\"]}:{r[\"line_number\"]}')
+              if len(results) > 5:
+                  print(f'  ... and {len(results)-5} more')
+          "
+
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+          retention-days: 30
+
+      - name: Security summary
+        if: always()
+        run: |
+          echo ""
+          echo "════════════════════════════════"
+          echo "  Security Scan Summary"
+          echo "════════════════════════════════"
+          echo "  ✅ Dependency scan complete"
+          echo "  ✅ Static analysis complete"
+          echo "  📊 Reports uploaded as artifacts"

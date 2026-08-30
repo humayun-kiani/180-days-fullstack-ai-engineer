@@ -89,6 +89,7 @@ This repository is:
 | [Day 43](./Day-43-Caching/)                     | Multi-layer caching, cache-aside, stampede protection, TTL                     | High-Performance Task API                             | ✅ Done |
 | [Day 44](./Day-44-DB-Optimization/)             | EXPLAIN ANALYZE, indexes, N+1, keyset pagination, profiler                     | Query Profiler & Optimizer                            | ✅ Done |
 | [Day 45](./Day-45-System-Design/)               | System design interviews: 6-step framework, CAP theorem, 5 designs             | System Design Simulator                               | ✅ Done |
+| [Day 46](./Day-46-CICD/)                        | GitHub Actions CI/CD, matrix testing, Docker build, security scan              | CI/CD Pipeline                                        | ✅ Done |
 | ...                                             | ...                                                                            | ...                                                   | ...     |
 | Day 180                                         | Job Applications & Offers                                                      | —                                                     | ⏳      |
 

@@ -1,0 +1,159 @@
+# .github/workflows/ci.yml
+# Main CI pipeline: runs on every push and PR
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "feature/**"]
+  pull_request:
+    branches: [main, develop]
+
+# Cancel in-progress runs when a new push is made
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Job 1: Lint ───────────────────────────────────────────
+  lint:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install linting tools
+        run: pip install ruff
+
+      - name: Check code style with ruff
+        run: ruff check app/ tests/
+
+      - name: Check formatting
+        run: ruff format --check app/ tests/
+
+  # ── Job 2: Test (Matrix) ──────────────────────────────────
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    needs: lint # Only run if lint passes
+
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+      fail-fast: false # Keep running other versions if one fails
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ \
+            --cov=app \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --tb=short \
+            -v
+        env:
+          PYTHONPATH: "."
+
+      - name: Check coverage threshold
+        run: |
+          coverage report --fail-under=85
+        env:
+          PYTHONPATH: "."
+
+      - name: Upload coverage report
+        if: matrix.python-version == '3.11' # Only upload once
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 7
+
+  # ── Job 3: Build Docker Image ─────────────────────────────
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test # Only build if tests pass
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (no push — just verify it builds)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false # Don't push on PRs/feature branches
+          tags: task-api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Docker image health
+        run: |
+          # Start the container
+          docker run -d \
+            --name test-api \
+            -p 8000:8000 \
+            task-api:${{ github.sha }}
+
+          # Wait for it to be healthy
+          sleep 5
+
+          # Check health endpoint
+          curl --fail http://localhost:8000/health || \
+            (docker logs test-api && exit 1)
+
+          # Cleanup
+          docker stop test-api
+          docker rm test-api
+
+  # ── Job 4: Summary ────────────────────────────────────────
+  ci-summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [lint, test, build]
+    if: always() # Run even if other jobs failed
+
+    steps:
+      - name: Check all jobs passed
+        run: |
+          if [[ "${{ needs.lint.result }}" != "success" ]]; then
+            echo "❌ Lint failed"
+            exit 1
+          fi
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            echo "❌ Tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.build.result }}" != "success" ]]; then
+            echo "❌ Build failed"
+            exit 1
+          fi
+          echo "✅ All CI checks passed!"
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Author: ${{ github.actor }}"
