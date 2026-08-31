@@ -1,0 +1,18 @@
+# k8s/base/configmap.yaml
+# Non-sensitive configuration for the Task API
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: task-api-config
+  namespace: task-api
+  labels:
+    app: task-api
+data:
+  LOG_LEVEL: "INFO"
+  MAX_TASKS: "10000"
+  ENVIRONMENT: "production"
+
+  # Application settings
+  WORKERS: "1"
+  TIMEOUT: "30"

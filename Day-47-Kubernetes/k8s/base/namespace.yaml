@@ -1,0 +1,10 @@
+# k8s/base/namespace.yaml
+# Isolate our app from other resources in the cluster
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: task-api
+  labels:
+    name: task-api
+    managed-by: kubectl

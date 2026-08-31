@@ -1,0 +1,43 @@
+# k8s/overlays/development/kustomization.yaml
+# Kustomize overlay for development environment
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference base manifests
+resources:
+  - ../../base
+
+# Override for development
+namespace: task-api-dev
+
+# Patch: fewer replicas in dev, different config
+patches:
+  - target:
+      kind: Deployment
+      name: task-api
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: "64Mi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "128Mi"
+
+# Override ConfigMap values for development
+configMapGenerator:
+  - name: task-api-config
+    behavior: merge
+    literals:
+      - LOG_LEVEL=DEBUG
+      - ENVIRONMENT=development
+      - MAX_TASKS=100
+
+# Add dev suffix to all resource names
+nameSuffix: "-dev"
+
+commonLabels:
+  environment: development

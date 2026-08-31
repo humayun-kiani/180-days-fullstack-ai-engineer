@@ -1,0 +1,31 @@
+# k8s/overlays/production/kustomization.yaml
+# Kustomize overlay for production
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+namespace: task-api-prod
+
+# Production: more replicas, stricter limits
+patches:
+  - target:
+      kind: Deployment
+      name: task-api
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 5
+
+configMapGenerator:
+  - name: task-api-config
+    behavior: merge
+    literals:
+      - LOG_LEVEL=WARNING
+      - ENVIRONMENT=production
+      - MAX_TASKS=100000
+
+commonLabels:
+  environment: production

@@ -1,0 +1,38 @@
+# k8s/base/ingress.yaml
+# Ingress: route external HTTP traffic to services
+# Requires an Ingress Controller (nginx-ingress, traefik, etc.)
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: task-api-ingress
+  namespace: task-api
+  labels:
+    app: task-api
+  annotations:
+    # nginx-ingress annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-burst-multiplier: "3"
+
+spec:
+  ingressClassName: nginx
+
+  rules:
+    - host: task-api.local # DNS must point here
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: task-api-service
+                port:
+                  number: 80
+
+  # TLS (add cert for production):
+  # tls:
+  #   - hosts:
+  #       - task-api.local
+  #     secretName: task-api-tls-cert

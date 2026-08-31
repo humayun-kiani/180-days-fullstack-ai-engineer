@@ -1,0 +1,128 @@
+# k8s/base/deployment.yaml
+# The core deployment — manages our task-api pods
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-api
+  namespace: task-api
+  labels:
+    app: task-api
+    version: "1.0.0"
+  annotations:
+    description: "Task management API"
+    contact: "humayun@example.com"
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: task-api
+
+  # Rolling update: never have 0 healthy pods during update
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # 1 extra pod during update (4 total)
+      maxUnavailable: 0 # Never reduce below 3
+
+  template:
+    metadata:
+      labels:
+        app: task-api
+        version: "1.0.0"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+
+    spec:
+      # Graceful termination
+      terminationGracePeriodSeconds: 30
+
+      # Security context for the pod
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+
+      containers:
+        - name: task-api
+          image: task-api:1.0.0 # Override in overlays for different envs
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+
+          # ── Environment from ConfigMap ──────────────────
+          envFrom:
+            - configMapRef:
+                name: task-api-config
+            - secretRef:
+                name: task-api-secrets
+
+          # ── Downward API: inject pod info as env vars ──
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name # The pod's own name!
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName # Which node it's on
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+
+          # ── Resource limits ─────────────────────────────
+          resources:
+            requests:
+              memory: "128Mi" # Scheduler uses this to place pods
+              cpu: "100m" # 100 millicores = 0.1 vCPU
+            limits:
+              memory: "256Mi" # OOMKill if exceeded
+              cpu: "500m" # Throttle (not kill) if exceeded
+
+          # ── Health probes ───────────────────────────────
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            failureThreshold: 3
+
+          # ── Security context for container ─────────────
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+
+      # Don't schedule 2 pods on same node (high availability)
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: task-api
+                topologyKey: kubernetes.io/hostname
+
+      # Tolerate node taints (advanced scheduling)
+      # tolerations: []

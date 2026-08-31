@@ -1,0 +1,49 @@
+# k8s/base/hpa.yaml
+# Horizontal Pod Autoscaler — scale based on metrics
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: task-api-hpa
+  namespace: task-api
+
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: task-api
+
+  minReplicas: 2 # Always run at least 2 pods (HA)
+  maxReplicas: 10 # Max 10 pods
+
+  metrics:
+    # Scale when average CPU > 70%
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+
+    # Scale when average memory > 80%
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+  # Scaling behavior (prevent flapping)
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300 # Wait 5min before scaling down
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60 # Remove max 1 pod per minute
+    scaleUp:
+      stabilizationWindowSeconds: 0 # Scale up immediately
+      policies:
+        - type: Pods
+          value: 2
+          periodSeconds: 60 # Add max 2 pods per minute
