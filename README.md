@@ -91,6 +91,7 @@ This repository is:
 | [Day 45](./Day-45-System-Design/)               | System design interviews: 6-step framework, CAP theorem, 5 designs             | System Design Simulator                               | ✅ Done |
 | [Day 46](./Day-46-CICD/)                        | GitHub Actions CI/CD, matrix testing, Docker build, security scan              | CI/CD Pipeline                                        | ✅ Done |
 | [Day 47](./Day-47-Kubernetes/)                  | Kubernetes: pods, deployments, services, probes, HPA, Kind                     | Task API on K8s                                       | ✅ Done |
+| [Day 48](./Day-48-Terraform/)                   | Terraform: providers, modules, state, plan/apply, dev vs prod                  | Task API IaC                                          | ✅ Done |
 | ...                                             | ...                                                                            | ...                                                   | ...     |
 | Day 180                                         | Job Applications & Offers                                                      | —                                                     | ⏳      |
 
