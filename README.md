@@ -92,6 +92,7 @@ This repository is:
 | [Day 46](./Day-46-CICD/)                        | GitHub Actions CI/CD, matrix testing, Docker build, security scan              | CI/CD Pipeline                                        | ✅ Done |
 | [Day 47](./Day-47-Kubernetes/)                  | Kubernetes: pods, deployments, services, probes, HPA, Kind                     | Task API on K8s                                       | ✅ Done |
 | [Day 48](./Day-48-Terraform/)                   | Terraform: providers, modules, state, plan/apply, dev vs prod                  | Task API IaC                                          | ✅ Done |
+| [Day 49](./Day-49-Observability/)               | Metrics, structured logging, tracing, health checks, SLOs, alerts              | Observability Stack                                   | ✅ Done |
 | ...                                             | ...                                                                            | ...                                                   | ...     |
 | Day 180                                         | Job Applications & Offers                                                      | —                                                     | ⏳      |
 
