@@ -94,8 +94,10 @@ This repository is:
 | [Day 48](./Day-48-Terraform/)                   | Terraform: providers, modules, state, plan/apply, dev vs prod                        | Task API IaC                                          | ✅ Done |
 | [Day 49](./Day-49-Observability/)               | Metrics, structured logging, tracing, health checks, SLOs, alerts                    | Observability Stack                                   | ✅ Done |
 | [Day 50](./Day-50-Production-Ops/)              | Production ops: deployment pipeline, chaos engineering, incidents, capacity planning | Ops Simulator                                         | ✅ Done |
-| ...                                             | ...                                                                                  | ...                                                   | ...     |
-| Day 180                                         | Job Applications & Offers                                                            | —                                                     | ⏳      |
+| [Day 51](./Day-51-Full-Stack-AI/)               | Full stack: React + FastAPI + PostgreSQL + Redis + Claude + WebSocket                | TaskMind AI App                                       | ✅ Done |
+
+| ... | ... | ... | ... |
+| Day 180 | Job Applications & Offers | — | ⏳ |
 
 > ✅ Done &nbsp;|&nbsp; 🔄 In Progress &nbsp;|&nbsp; ⏳ Upcoming
 
