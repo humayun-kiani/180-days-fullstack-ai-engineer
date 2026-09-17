@@ -96,6 +96,7 @@ This repository is:
 | [Day 50](./Day-50-Production-Ops/)              | Production ops: deployment pipeline, chaos engineering, incidents, capacity planning | Ops Simulator                                         | ✅ Done |
 | [Day 51](./Day-51-Full-Stack-AI/)               | Full stack: React + FastAPI + PostgreSQL + Redis + Claude + WebSocket                | TaskMind AI App                                       | ✅ Done |
 | [Day 52](./Day-52-Advanced-Features/) | Search, keyboard shortcuts, stats, export, audit log, bulk actions | TaskMind v2 | ✅ Done |
+| [Day 53](./Day-53-Mobile-A11y/) | Mobile-first, touch gestures, ARIA, focus management, PWA | TaskMind Mobile | ✅ Done |
 
 | ... | ... | ... | ... |
 | Day 180 | Job Applications & Offers | — | ⏳ |
