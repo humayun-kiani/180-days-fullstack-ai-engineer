@@ -98,6 +98,7 @@ This repository is:
 | [Day 52](./Day-52-Advanced-Features/) | Search, keyboard shortcuts, stats, export, audit log, bulk actions | TaskMind v2 | ✅ Done |
 | [Day 53](./Day-53-Mobile-A11y/) | Mobile-first, touch gestures, ARIA, focus management, PWA | TaskMind Mobile | ✅ Done |
 | [Day 54](./Day-54-Testing/) | pytest, React Testing Library, Playwright E2E, mocking, coverage | 116+ tests for TaskMind | ✅ Done |
+| [Day 55](./Day-55-Performance/) | Query profiling, N+1 detection, caching, virtual scrolling, Locust load tests | Profiled TaskMind | ✅ Done |
 
 | ... | ... | ... | ... |
 | Day 180 | Job Applications & Offers | — | ⏳ |
