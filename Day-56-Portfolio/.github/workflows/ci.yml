@@ -1,0 +1,97 @@
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-backend:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        working-directory: ./Day-54-Testing/backend
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-test.txt
+
+      - name: Run linting
+        working-directory: ./Day-54-Testing/backend
+        run: |
+          pip install ruff
+          ruff check app/
+
+      - name: Run tests with coverage
+        working-directory: ./Day-54-Testing/backend
+        run: |
+          pytest --cov=app --cov-report=xml --cov-fail-under=80
+        env:
+          ENVIRONMENT: test
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./Day-54-Testing/backend/coverage.xml
+
+  test-frontend:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Day-54-Testing/frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./Day-54-Testing/frontend
+        run: npm ci
+
+      - name: Run tests
+        working-directory: ./Day-54-Testing/frontend
+        run: npm run test -- --run --coverage
+
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Ruff lint
+        run: |
+          pip install ruff
+          ruff check Day-54-Testing/backend/app/ --output-format=github
+
+  docker-build:
+    name: Docker Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t taskmind-backend ./Day-51-Full-Stack-AI/backend
+
+      - name: Build frontend image
+        run: docker build -t taskmind-frontend ./Day-51-Full-Stack-AI/frontend
